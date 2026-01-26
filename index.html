@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macroeconomía II - Dr. Adrián Eduardo Pech Quijano</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
+    <style>
+        :root { --blue: #1e40af; --red: #b91c1c; --green: #065f46; --orange: #c2410c; --slate: #334155; --uac-gold: #b89c5e; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+        
+        #welcome-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(248, 250, 252, 0.98);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .welcome-card {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-inst { text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--slate); padding-bottom: 15px; }
+        .header-inst h1 { margin: 0; font-size: 1.6rem; color: var(--slate); }
+        .header-inst p { margin: 5px 0; font-weight: 500; }
+        
+        .uac-shield { 
+            width: 120px; 
+            height: auto; 
+            margin: 0 auto 15px auto; 
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        
+        .wrapper { max-width: 1500px; margin: auto; display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+        .sidebar { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .formula-card { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; border-left: 4px solid var(--blue); }
+        .control-group { margin-bottom: 12px; }
+        label { display: block; font-weight: 600; font-size: 0.8rem; margin-bottom: 3px; color: var(--slate); }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .val-display { float: right; color: var(--blue); font-weight: bold; }
+        
+        .delta-badge { font-size: 0.7rem; padding: 1px 5px; border-radius: 4px; margin-left: 5px; font-weight: 800; display: inline-block; vertical-align: middle; }
+        .delta-pos { background: #dcfce7; color: #166534; }
+        .delta-neg { background: #fee2e2; color: #991b1b; }
+
+        .results-summary { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
+        .res-item { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: var(--slate); }
+        .res-val { font-weight: bold; }
+
+        .main-content { display: flex; flex-direction: column; gap: 20px; }
+        .chart-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 380px; }
+        .logic-panel { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; }
+        
+        .instructional-content h3 { color: var(--blue); margin-top: 20px; }
+        .eco-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+        .eco-table th, .eco-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; text-align: left; }
+        .eco-table tr:hover { background-color: #f8fafc; }
+        
+        #stability-alert { background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
+        .btn-panic { background: #991b1b; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .btn-action { background: var(--slate); color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .btn-start { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 25px; transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+<div id="welcome-overlay">
+    <div class="welcome-card">
+        <div class="header-inst">
+            <img src="uac-logo-2020-sm.png" alt="Escudo Universidad Autónoma de Campeche" class="uac-shield">
+            <h1>Universidad Autónoma de Campeche</h1>
+            <p>Facultad de Ciencias Sociales | Macroeconomía II</p>
+            <p style="color: var(--blue); font-size: 1.1rem;">Titular: Dr. Adrián Eduardo Pech Quijano</p>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <p><strong>Descripción del Material Informático e Inédito</strong></p>
+        </div>
+        
+        <div class="instructional-content">
+            <p>Este simulador interactivo constituye un <strong>Objeto de Aprendizaje (OA)</strong> diseñado para la visualización dinámica de modelos macroeconómicos de economía abierta.</p>
+            <h3>Guía Instruccional</h3>
+            <ul>
+                <li>Analizar el impacto de la política fiscal (G, T) sobre el nivel de ingreso.</li>
+                <li>Comprender la relación entre el sector externo y el producto doméstico.</li>
+                <li>Verificar numéricamente la identidad fundamental S - I = NX.</li>
+            </ul>
+        </div>
+
+        <button class="btn-start" onclick="document.getElementById('welcome-overlay').style.display='none'">
+            Comenzar Simulación
+        </button>
+    </div>
+</div>
+
+<div class="header-inst">
+    <img src="uac-logo-2020-sm.png" alt="Escudo UAC" class="uac-shield" style="width: 80px;">
+    <h1>Universidad Autónoma de Campeche</h1>
+    <p>Facultad de Ciencias Sociales | Macroeconomía II</p>
+    <p>Titular: Dr. Adrián Eduardo Pech Quijano</p>
+</div>
+
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="formula-card">
+            <strong>Identidades del Modelo:</strong><br>
+            • Consumo: <b>C = 250 + 0.6Y<sub>d</sub></b><br>
+            • Inversión: <b>I = 0.2Y - 1000i</b><br>
+            • Condición: <b>S - I = NX</b>
+        </div>
+        <div class="control-group">
+            <label>Gasto público (G): <span id="vG" class="val-display">2000</span></label>
+            <input type="range" id="iG" min="500" max="4000" step="100" value="2000">
+        </div>
+        <div class="control-group">
+            <label>Impuestos autónomos (T₀): <span id="vT0" class="val-display">500</span></label>
+            <input type="range" id="iT0" min="0" max="1500" step="50" value="500">
+        </div>
+        <div class="control-group">
+            <label>Tasa impositiva (t): <span id="vt" class="val-display">0.20</span></label>
+            <input type="range" id="it" min="0" max="0.4" step="0.01" value="0.20">
+        </div>
+        <div class="control-group">
+            <label>Tipo de cambio (e): <span id="ve" class="val-display">1.0</span></label>
+            <input type="range" id="ie" min="0.5" max="2.5" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+            <label>PIB mundial (Y*): <span id="vYstar" class="val-display">5000</span></label>
+            <input type="range" id="iYstar" min="2000" max="8000" step="100" value="5000">
+        </div>
+        <button onclick="saveBase()" class="btn-action">Fijar escenario base</button>
+        <button onclick="triggerCrisis()" class="btn-panic">Simular crisis mundial</button>
+        <button onclick="exportData()" class="btn-action" style="background:#059669">Exportar reporte txt</button>
+        
+        <div id="results-quick-summary" class="results-summary"></div>
+
+        <div class="formula-card" style="margin-top:15px; border-left-color: var(--orange);">
+            <strong>Multiplicador (α): <span id="valAlpha">1.92</span></strong><br>
+            <small>Indica el efecto amplificador del gasto autónomo sobre el ingreso. Considera la tasa impositiva (t) y la propensión a importar (m=0.2).</small>
+        </div>
+
+        <div id="stability-alert"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="chart-box"><canvas id="chartDA"></canvas></div>
+        <div class="chart-box"><canvas id="chartT"></canvas></div>
+        <div class="chart-box"><canvas id="chartNX"></canvas></div>
+        <div class="chart-box"><canvas id="chartS"></canvas></div>
+        
+        <div class="logic-panel">
+            <h3>Desglose de identidades económicas</h3>
+            <table class="eco-table">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Cálculo / Fórmula</th>
+                        <th>Valor actual</th>
+                        <th>Estado / Nota</th>
+                    </tr>
+                </thead>
+                <tbody id="eco-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let base = null;
+    let charts = {};
+
+    function triggerCrisis() {
+        document.getElementById('iYstar').value = 2500;
+        document.getElementById('ie').value = 2.0;
+        update();
+    }
+
+    function exportData() {
+        const cur = calc();
+        const content = `REPORTE MACROECONÓMICO - UAC\n----------------------------------\nTITULAR: DR. ADRIÁN EDUARDO PECH QUIJANO\nPIB Total (Y): ${Math.round(cur.Y)}\nMultiplicador: ${cur.alpha.toFixed(2)}\nRecaudación (T): ${Math.round(cur.T)}\nConsumo (C): ${Math.round(cur.C)}\nInversión (I): ${Math.round(cur.I)}\nSaldo Fiscal: ${Math.round(cur.Spub)}\nSaldo Comercial (NX): ${Math.round(cur.NX)}`;
+        const blob = new Blob([content], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'reporte_economico.txt';
+        a.click();
+    }
+
+    function calc() {
+        const G = +document.getElementById('iG').value;
+        const T0 = +document.getElementById('iT0').value;
+        const t = +document.getElementById('it').value;
+        const e = +document.getElementById('ie').value;
+        const Ystar = +document.getElementById('iYstar').value;
+        const i = 0.04; 
+        
+        const c = 0.6;
+        const m = 0.2;
+        const alpha = 1 / (1 - (c * (1 - t)) + m); 
+
+        const A_const = 250 - (0.6 * T0) - (1000 * i) + G + (0.2 * Ystar) - (200 * e);
+        const pendiente = 0.6 * (1 - t); 
+        const Y = A_const / (1 - (pendiente - m)); 
+        const T = T0 + t * Y;
+        const C = 250 + 0.6 * (Y - T);
+        const I = 0.2 * Y - 1000 * i;
+        const X = 0.2 * Ystar - 100 * e;
+        const IM = 0.2 * Y + 100 * e;
+        const NX = X - IM;
+        const Spriv = (Y - T) - C;
+        const Spub = T - G;
+        const Snac = Spriv + Spub;
+        return { G, T0, t, e, Ystar, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha };
+    }
+
+    function saveBase() { base = calc(); update(); }
+
+    function update() {
+        const cur = calc();
+        if (!base) base = {...cur};
+        
+        const fmt = (v) => Math.round(v).toLocaleString();
+
+        const getDeltaLabel = (current, baseVal, isDec = false) => {
+            const diff = isDec ? (current - baseVal) : Math.round(current - baseVal);
+            if (Math.abs(diff) < 0.001) return "";
+            const cls = diff > 0 ? 'delta-pos' : 'delta-neg';
+            return `<span class="delta-badge ${cls}">${diff > 0 ? '+' : ''}${isDec ? diff.toFixed(2) : diff}</span>`;
+        };
+
+        ['G','T0','t','e','Ystar'].forEach(k => {
+            const el = document.getElementById('v'+k);
+            if(el) el.innerHTML = `${(k === 't' || k === 'e') ? cur[k].toFixed(2) : cur[k]}${getDeltaLabel(cur[k], base[k], (k === 't' || k === 'e'))}`;
+        });
+
+        document.getElementById('valAlpha').innerText = cur.alpha.toFixed(2);
+
+        const resultsDiv = document.getElementById('results-quick-summary');
+        const items = [
+            { l: 'PIB Total (Y)', v: cur.Y, b: base.Y },
+            { l: 'Consumo (C)', v: cur.C, b: base.C },
+            { l: 'Saldo Fiscal', v: cur.Spub, b: base.Spub },
+            { l: 'Export. Netas', v: cur.NX, b: base.NX }
+        ];
+
+        resultsDiv.innerHTML = items.map(it => `
+            <div class="res-item">
+                <span>${it.l}:</span>
+                <span class="res-val">${fmt(it.v)} ${getDeltaLabel(it.v, it.b)}</span>
+            </div>
+        `).join('');
+
+        document.getElementById('eco-body').innerHTML = `
+            <tr><td><b>PIB (Y)</b></td><td>α * A_autónomo</td><td><b>${fmt(cur.Y)}</b></td><td>Producción de equilibrio</td></tr>
+            <tr><td>Consumo (C)</td><td>250 + 0.6(Y-T)</td><td>${fmt(cur.C)}</td><td>Gasto de hogares</td></tr>
+            <tr><td>Inversión (I)</td><td>0.2Y - 1000(0.04)</td><td>${fmt(cur.I)}</td><td>Formación de capital</td></tr>
+            <tr><td>Saldo Fiscal</td><td>T - G</td><td style="color:${cur.Spub >= 0 ? 'green' : 'red'}"><b>${fmt(cur.Spub)}</b></td><td>${cur.Spub >= 0 ? 'Superávit' : 'Déficit'} Presupuestal</td></tr>
+            <tr><td>Sector Externo (NX)</td><td>X - IM</td><td style="color:${cur.NX >= 0 ? 'green' : 'red'}"><b>${fmt(cur.NX)}</b></td><td>${cur.NX >= 0 ? 'Superávit' : 'Déficit'} Comercial</td></tr>
+            <tr style="background: #f1f5f9; font-weight: bold;"><td>Identidad S-I</td><td>(S_nac - I) = NX</td><td>${fmt(cur.Snac - cur.I)} = ${fmt(cur.NX)}</td><td style="color:var(--blue)">Equilibrio Verificado</td></tr>`;
+            
+        render(cur);
+    }
+
+    function render(cur) {
+        const labels = Array.from({length: 16}, (_, i) => i * 1000);
+        const xPos = cur.Y / 1000;
+        
+        const datasets = {
+            DA: [{ label: 'DA', data: labels.map(y => cur.A_const + (cur.pendiente - 0.2) * y), borderColor: '#2563eb', tension: 0 }, { label: '45°', data: labels, borderColor: '#cbd5e1', borderDash: [5,5], tension: 0 }],
+            T: [{ label: 'T', data: labels.map(y => cur.T0 + cur.t * y), borderColor: '#059669', tension: 0 }, { label: 'G', data: labels.map(() => cur.G), borderColor: '#dc2626', borderDash: [4,4], tension: 0 }],
+            NX: [{ label: 'NX', data: labels.map(y => (0.2 * cur.Ystar - 100 * cur.e) - (0.2 * y + 100 * cur.e)), borderColor: '#7c3aed', tension: 0 }],
+            S: [{ label: 'S_nac', data: labels.map(y => { 
+                let t_y = cur.T0 + cur.t * y; 
+                let c_y = 250 + 0.6 * (y - t_y); 
+                return (y - t_y - c_y) + (t_y - cur.G); 
+            }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => 0.2 * y - 40), borderColor: '#ea580c', tension: 0 }]
+        };
+
+        ['DA', 'T', 'NX', 'S'].forEach((id) => {
+            const ctx = document.getElementById('chart' + id);
+            
+            let commonAnnotations = {
+                equilibrioLine: {
+                    type: 'line', xMin: xPos, xMax: xPos,
+                    borderColor: 'rgba(30, 64, 175, 0.4)', borderWidth: 2, borderDash: [6, 6],
+                    label: {
+                        display: true, content: 'Y: ' + Math.round(cur.Y), position: 'start',
+                        backgroundColor: 'rgba(30, 64, 175, 0.8)', color: 'white', font: { size: 10 }
+                    }
+                },
+                dot: {
+                    type: 'point', xValue: xPos,
+                    yValue: id === 'DA' ? cur.Y : (id === 'T' ? cur.T : (id === 'NX' ? cur.NX : cur.Snac)),
+                    backgroundColor: 'var(--blue)', radius: 5, borderColor: 'white', borderWidth: 2
+                }
+            };
+
+            if (id === 'T') {
+                commonAnnotations.statusLabel = {
+                    type: 'label', xValue: 7.5, yValue: 8000,
+                    content: [cur.Spub >= 0 ? 'ZONA SUPERÁVIT FISCAL' : 'ZONA DÉFICIT FISCAL'],
+                    backgroundColor: 'rgba(255,255,255,0.8)', color: cur.Spub >= 0 ? 'green' : 'red',
+                    font: { size: 12, weight: 'bold' }, padding: 6
+                };
+            } else if (id === 'NX') {
+                commonAnnotations.zeroLine = { type: 'line', yMin: 0, yMax: 0, borderColor: 'black', borderWidth: 1 };
+                commonAnnotations.statusLabel = {
+                    type: 'label', xValue: 7.5, yValue: 2000,
+                    content: [cur.NX >= 0 ? 'ZONA SUPERÁVIT COMERCIAL' : 'ZONA DÉFICIT COMERCIAL'],
+                    backgroundColor: 'rgba(255,255,255,0.8)', color: cur.NX >= 0 ? 'green' : 'red',
+                    font: { size: 12, weight: 'bold' }, padding: 6
+                };
+            }
+
+            if (charts[id]) {
+                charts[id].data.datasets = datasets[id];
+                charts[id].options.plugins.annotation.annotations = commonAnnotations;
+                charts[id].update('none');
+            } else {
+                charts[id] = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels, datasets: datasets[id] },
+                    options: { 
+                        responsive: true, maintainAspectRatio: false, animation: false,
+                        elements: { point: { radius: 0 } },
+                        scales: { 
+                            y: { beginAtZero: false, suggestedMax: 10000 },
+                            x: { display: true, title: { display: true, text: 'Ingreso (Y)' } }
+                        },
+                        plugins: { annotation: { annotations: commonAnnotations } }
+                    }
+                });
+            }
+        });
+    }
+    window.onload = update;
+    document.querySelectorAll('input').forEach(i => i.addEventListener('input', update));
+</script>
+</body>
+</html>
