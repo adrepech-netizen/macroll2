@@ -162,25 +162,31 @@
     <div class="guide-card" onclick="event.stopPropagation()">
         <h2 style="color: var(--blue); border-bottom: 2px solid var(--uac-gold); padding-bottom: 10px; margin-top: 0;">Guía de Ejercicios Prácticos</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--slate);">
-            <p><strong>Ejercicio 1: Multiplicador y política fiscal</strong><br>
-            1. En el simulador, haga clic en <b>"Fijar escenario base"</b>.<br>
-            2. Aumente el <b>Gasto público (G)</b> en 500 unidades (de 2000 a 2500).<br>
-            3. Observe el incremento en el <b>PIB (Y)</b>. Divida el aumento de Y entre el aumento de G. ¿Coincide con el valor de <b>α</b> mostrado en la tarjeta naranja?</p>
+            <p><strong>Ejercicio 1: Sensibilidad del Consumo y Multiplicador</strong><br>
+            1. Haga clic en <b>"Fijar escenario base"</b>.<br>
+            2. Aumente la <b>Propensión marginal a consumir (c)</b> de 0.60 a 0.80.<br>
+            3. Observe la tarjeta naranja: ¿Qué sucedió con el <b>Multiplicador (α)</b>? <br>
+            4. Ahora aumente el <b>Gasto (G)</b> en 200 unidades. Compare el crecimiento del PIB con este multiplicador alto frente al escenario original.</p>
             
-            <p><strong>Ejercicio 2: El Fenómeno de los déficits gemelos</strong><br>
-            1. Restablezca el escenario base y luego reduzca la <b>Tasa impositiva (t)</b> a 0.10.<br>
-            2. Observe el <b>Saldo Fiscal</b> en la tabla de identidades (se tornará rojo/negativo).<br>
-            3. Observe qué sucede simultáneamente con las <b>Exportaciones Netas (NX)</b>. ¿Por qué la expansión del ingreso reduce el superávit comercial?</p>
+            <p><strong>Ejercicio 2: El Consumo Autónomo y la Demanda Agregada</strong><br>
+            1. Restablezca el simulador y fije base. Aumente el <b>Consumo autónomo (C₀)</b> a 750.<br>
+            2. Observe el Gráfico I: ¿Cómo se desplaza la curva DA? <br>
+            3. Verifique en la tabla de identidades el nuevo nivel de <b>Ahorro Privado</b>. ¿Por qué un mayor consumo autónomo reduce inicialmente el ahorro si el ingreso no aumenta proporcionalmente?</p>
             
-            <p><strong>Ejercicio 3: Choque externo y competitividad</strong><br>
-            1. Pulse el botón <b>"Simular crisis mundial"</b> (esto reduce Y* y deprecia la moneda).<br>
-            2. Identifique el impacto en la curva <b>NX</b> (Gráfico III).<br>
-            3. Intente compensar la caída del PIB aumentando el <b>Tipo de Cambio (e)</b> manualmente. ¿Qué efecto tiene esto sobre el equilibrio Ahorro-Inversión?</p>
+            <p><strong>Ejercicio 3: Política Fiscal y Déficits Gemelos</strong><br>
+            1. Reduzca la <b>Tasa impositiva (t)</b> a 0.10 y aumente <b>G</b> a 2500.<br>
+            2. Observe el <b>Saldo Fiscal</b> y las <b>Exportaciones Netas (NX)</b>. <br>
+            3. Analice cómo el aumento del ingreso (estimulado por la baja de impuestos y el consumo) termina deteriorando la balanza comercial.</p>
 
-            <p><strong>Ejercicio 4: Verificación de identidades</strong><br>
-            1. Realice cualquier movimiento aleatorio en los controles.<br>
+            <p><strong>Ejercicio 4: Identidad S-I en Economía Abierta</strong><br>
+            1. Realice cambios en <b>Y* (PIB Mundial)</b> y <b>e (Tipo de cambio)</b>.<br>
             2. Diríjase a la última fila de la tabla: <b>Identidad S-I</b>.<br>
-            3. Compruebe que la resta del Ahorro Nacional menos la Inversión sea exactamente igual a las Exportaciones Netas. Explique el significado económico de esta igualdad.</p>
+            3. Compruebe que la diferencia entre Ahorro Nacional e Inversión siempre iguala a NX. Explique cómo el sector externo financia las brechas de ahorro doméstico.</p>
+
+            <p><strong>Ejercicio 5: Transmisión Internacional y Choques Externos</strong><br>
+            1. Fije escenario base. Incremente el <b>PIB mundial (Y*)</b> de 5000 a 7000.<br>
+            2. Observe el Gráfico III: ¿Cómo afecta el crecimiento de nuestros socios comerciales a las <b>Exportaciones Netas (NX)</b>?<br>
+            3. Analice el Gráfico I: ¿En cuántas unidades aumentó el PIB local sin necesidad de aumentar el Gasto Público? Este es el efecto de la demanda externa.</p>
         </div>
         <button class="btn-action" style="margin-top: 20px; background: var(--blue);" onclick="document.getElementById('exercise-guide').style.display='none'">Continuar con la simulación</button>
     </div>
@@ -306,7 +312,7 @@
 
     function exportData() {
         const cur = calc();
-        const content = `REPORTE MACROECONÓMICO - UAC\n----------------------------------\nTITULAR: DR. ADRIÁN EDUARDO PECH QUIJANO\nPIB Total (Y): ${Math.round(cur.Y)}\nMultiplicador: ${cur.alpha.toFixed(2)}\nRecaudación (T): ${Math.round(cur.T)}\nConsumo (C): ${Math.round(cur.C)}\nInversión (I): ${Math.round(cur.I)}\nSaldo Fiscal: ${Math.round(cur.Spub)}\nSaldo Comercial (NX): ${Math.round(cur.NX)}`;
+        const content = `REPORTE MACROECONÓMICO - UAC\n----------------------------------\nTITULAR: DR. ADRIÁN EDUARDO PECH QUIIJANO\nPIB Total (Y): ${Math.round(cur.Y)}\nMultiplicador: ${cur.alpha.toFixed(2)}\nRecaudación (T): ${Math.round(cur.T)}\nConsumo (C): ${Math.round(cur.C)}\nInversión (I): ${Math.round(cur.I)}\nSaldo Fiscal: ${Math.round(cur.Spub)}\nSaldo Comercial (NX): ${Math.round(cur.NX)}`;
         const blob = new Blob([content], {type: 'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -320,8 +326,8 @@
         const t = +document.getElementById('it').value;
         const e = +document.getElementById('ie').value;
         const Ystar = +document.getElementById('iYstar').value;
-        const C0 = +document.getElementById('iC0').value; // Nuevo
-        const c = +document.getElementById('ic').value;   // Nuevo
+        const C0 = +document.getElementById('iC0').value; 
+        const c = +document.getElementById('ic').value;   
         
         const i = 0.04; 
         const m = 0.2;
