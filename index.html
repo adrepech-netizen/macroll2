@@ -197,10 +197,19 @@
     <div class="sidebar">
         <div class="formula-card">
             <strong>Identidades del modelo:</strong><br>
-            • Consumo: <b>C = 250 + 0.6Y<sub>d</sub></b><br>
+            • Consumo: <b>C = C₀ + cY<sub>d</sub></b><br>
             • Inversión: <b>I = 0.2Y - 1000i</b><br>
             • Condición: <b>S - I = NX</b>
         </div>
+        <div class="control-group">
+            <label>Consumo autónomo (C₀): <span id="vC0" class="val-display">250</span></label>
+            <input type="range" id="iC0" min="0" max="1000" step="50" value="250">
+        </div>
+        <div class="control-group">
+            <label>Prop. marginal a consumir (c): <span id="vc" class="val-display">0.60</span></label>
+            <input type="range" id="ic" min="0.1" max="0.9" step="0.05" value="0.60">
+        </div>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
         <div class="control-group">
             <label>Gasto público (G): <span id="vG" class="val-display">2000</span></label>
             <input type="range" id="iG" min="500" max="4000" step="100" value="2000">
@@ -231,7 +240,7 @@
 
         <div class="formula-card" style="margin-top:15px; border-left-color: var(--orange);">
             <strong>Multiplicador (α): <span id="valAlpha">1.92</span></strong><br>
-            <small>Indica el efecto amplificador del gasto autónomo sobre el ingreso. Considera la tasa impositiva (t) y la propensión a importar (m=0.2).</small>
+            <small>Indica el efecto amplificador del gasto autónomo sobre el ingreso. Considera (c), (t) y la propensión a importar (m=0.2).</small>
         </div>
 
         <div id="stability-alert"></div>
@@ -311,17 +320,19 @@
         const t = +document.getElementById('it').value;
         const e = +document.getElementById('ie').value;
         const Ystar = +document.getElementById('iYstar').value;
-        const i = 0.04; 
+        const C0 = +document.getElementById('iC0').value; // Nuevo
+        const c = +document.getElementById('ic').value;   // Nuevo
         
-        const c = 0.6;
+        const i = 0.04; 
         const m = 0.2;
+        
         const alpha = 1 / (1 - (c * (1 - t)) + m); 
 
-        const A_const = 250 - (0.6 * T0) - (1000 * i) + G + (0.2 * Ystar) - (200 * e);
-        const pendiente = 0.6 * (1 - t); 
+        const A_const = C0 - (c * T0) - (1000 * i) + G + (0.2 * Ystar) - (200 * e);
+        const pendiente = c * (1 - t); 
         const Y = A_const / (1 - (pendiente - m)); 
         const T = T0 + t * Y;
-        const C = 250 + 0.6 * (Y - T);
+        const C = C0 + c * (Y - T);
         const I = 0.2 * Y - 100 * i; 
         const X = 0.2 * Ystar - 100 * e;
         const IM = 0.2 * Y + 100 * e;
@@ -329,7 +340,7 @@
         const Spriv = (Y - T) - C;
         const Spub = T - G;
         const Snac = Spriv + Spub;
-        return { G, T0, t, e, Ystar, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha, m };
+        return { G, T0, t, e, Ystar, C0, c, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha, m };
     }
 
     function saveBase() { base = calc(); update(); }
@@ -347,9 +358,12 @@
             return `<span class="delta-badge ${cls}">${diff > 0 ? '+' : ''}${isDec ? diff.toFixed(2) : diff}</span>`;
         };
 
-        ['G','T0','t','e','Ystar'].forEach(k => {
+        ['G','T0','t','e','Ystar','C0','c'].forEach(k => {
             const el = document.getElementById('v'+k);
-            if(el) el.innerHTML = `${(k === 't' || k === 'e') ? cur[k].toFixed(2) : cur[k]}${getDeltaLabel(cur[k], base[k], (k === 't' || k === 'e'))}`;
+            if(el) {
+                const decimales = (k === 't' || k === 'e' || k === 'c');
+                el.innerHTML = `${decimales ? cur[k].toFixed(2) : cur[k]}${getDeltaLabel(cur[k], base[k], decimales)}`;
+            }
         });
 
         document.getElementById('valAlpha').innerText = cur.alpha.toFixed(2);
@@ -371,7 +385,7 @@
 
         document.getElementById('eco-body').innerHTML = `
             <tr><td><b>PIB (Y)</b></td><td>α * A_autónomo</td><td><b>${fmt(cur.Y)}</b></td><td>Producción de equilibrio</td></tr>
-            <tr><td>Consumo (C)</td><td>250 + 0.6(Y-T)</td><td>${fmt(cur.C)}</td><td>Gasto de hogares</td></tr>
+            <tr><td>Consumo (C)</td><td>${cur.C0} + ${cur.c}(Y-T)</td><td>${fmt(cur.C)}</td><td>Gasto de hogares</td></tr>
             <tr><td>Inversión (I)</td><td>0.2Y - 1000(0.04)</td><td>${fmt(cur.I)}</td><td>Formación de capital</td></tr>
             <tr><td>Saldo Fiscal</td><td>T - G</td><td style="color:${cur.Spub >= 0 ? 'green' : 'red'}"><b>${fmt(cur.Spub)}</b></td><td>${cur.Spub >= 0 ? 'Superávit' : 'Déficit'} Presupuestal</td></tr>
             <tr><td>Sector Externo (NX)</td><td>X - IM</td><td style="color:${cur.NX >= 0 ? 'green' : 'red'}"><b>${fmt(cur.NX)}</b></td><td>${cur.NX >= 0 ? 'Superávit' : 'Déficit'} Comercial</td></tr>
@@ -390,7 +404,7 @@
             NX: [{ label: 'NX', data: labels.map(y => (0.2 * cur.Ystar - 100 * cur.e) - (0.2 * y + 100 * cur.e)), borderColor: '#7c3aed', tension: 0 }],
             S: [{ label: 'S_nac', data: labels.map(y => { 
                 let t_y = cur.T0 + cur.t * y; 
-                let c_y = 250 + 0.6 * (y - t_y); 
+                let c_y = cur.C0 + cur.c * (y - t_y); 
                 return (y - t_y - c_y) + (t_y - cur.G); 
             }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => 0.2 * y - 40), borderColor: '#ea580c', tension: 0 }],
             Theory: [{ label: 'DA (Demanda)', data: labels.map(y => (cur.A_const/1.5) + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: 'Y = DA', data: labels, borderColor: '#334155', tension: 0 }]
