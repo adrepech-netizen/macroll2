@@ -113,6 +113,23 @@
         .btn-guide:hover { background: #9c844a; }
         .btn-start { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 25px; transition: 0.3s; }
         .btn-start:hover { background: #172554; }
+
+        /* Estilo Bloque de Créditos */
+        .academic-credits {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 10px;
+            border-top: 5px solid var(--uac-gold);
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 25px;
+            align-items: center;
+        }
+        .credit-info h4 { margin: 0 0 8px 0; color: var(--blue); font-size: 1.1rem; }
+        .credit-info p { margin: 4px 0; font-size: 0.85rem; color: var(--slate); }
+        .credit-logo { text-align: center; border-right: 1px solid #e2e8f0; padding-right: 20px; }
     </style>
 </head>
 <body>
@@ -287,6 +304,22 @@
             <div class="theory-img">
                 <canvas id="chartTheory"></canvas>
                 <p style="font-size: 0.7rem; color: #64748b; text-align: center; margin-top: 5px;"><em>Esquema de determinación del ingreso de equilibrio</em></p>
+            </div>
+        </div>
+
+        <div class="academic-credits">
+            <div class="credit-logo">
+                <img src="uac-logo-2020-sm.png" alt="Escudo UAC" style="width: 80px; opacity: 0.8;">
+                <p style="font-weight: bold; margin-top: 8px; color: var(--slate); font-size: 0.7rem;">UAC ECONOMÍA</p>
+            </div>
+            <div class="credit-info">
+                <h4>Autoría y Créditos</h4>
+                <p><strong>Titular:</strong> Dr. Adrián Eduardo Pech Quijano</p>
+                <p><strong>Institución:</strong> Universidad Autónoma de Campeche (UAC)</p>
+                <p><strong>Facultad:</strong> Ciencias Sociales | Licenciatura en Economía</p>
+                <p style="font-size: 0.75rem; color: #64748b; font-style: italic; margin-top: 10px;">
+                    © 2026. Material educativo inédito diseñado para la Unidad de Aprendizaje: Macroeconomía II.
+                </p>
             </div>
         </div>
     </div>
