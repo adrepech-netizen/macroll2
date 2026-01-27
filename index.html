@@ -20,6 +20,27 @@
             align-items: center;
             padding: 20px;
         }
+
+        #exercise-guide {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .guide-card {
+            background: white;
+            max-width: 650px;
+            width: 95%;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
         .welcome-card {
             background: white;
             max-width: 850px;
@@ -71,10 +92,25 @@
         .eco-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
         .eco-table th, .eco-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; text-align: left; }
         .eco-table tr:hover { background-color: #f8fafc; }
+
+        .theory-section {
+            background: #fdfdfd;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .theory-text { flex: 1.2; }
+        .theory-img { flex: 0.8; height: 250px; background: white; border-radius: 8px; padding: 10px; border: 1px solid #eee; }
         
         #stability-alert { background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
         .btn-panic { background: #991b1b; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
         .btn-action { background: var(--slate); color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .btn-guide { background: var(--uac-gold); color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.3s; }
+        .btn-guide:hover { background: #9c844a; }
         .btn-start { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 25px; transition: 0.3s; }
         .btn-start:hover { background: #172554; }
     </style>
@@ -93,22 +129,22 @@
         
         <div class="instructional-content">
             <h3>Descripción del material informático e inédito</h3>
-            <p>Este software educativo interactivo representa un <strong>Objeto de aprendizaje (OA)</strong> original, desarrollado para modelar de forma algorítmica y visual el equilibrio en una economía abierta. A diferencia de las gráficas estáticas, este material permite la <strong>experimentación en tiempo real</strong> con variables exógenas, proporcionando una solución numérica instantánea a las identidades macroeconómicas fundamentales.</p>
+            <p>Este software educativo interactivo representa un <strong>objeto de aprendizaje (OA)</strong> original, desarrollado para modelar de forma algorítmica y visual el equilibrio en una economía abierta. A diferencia de las gráficas estáticas, este material permite la <strong>experimentación en tiempo real</strong> con variables exógenas, proporcionando una solución numérica instantánea a las identidades macroeconómicas fundamentales.</p>
             
-            <h3>Guía Instruccional del objeto de aprendizaje</h3>
+            <h3>Guía instruccional del objeto de aprendizaje</h3>
             
             <p><strong>1. Objetivos de aprendizaje:</strong></p>
             <ul>
                 <li>Identificar y cuantificar el efecto del <strong>multiplicador del gasto (α)</strong> bajo un régimen impositivo proporcional y propensión marginal a importar.</li>
-                <li>Simular escenarios de política fiscal expansiva y contractiva para observar su impacto en el Producto Interno Bruto (PIB).</li>
+                <li>Simular escenarios de política fiscal expansiva y contractiva para observar su impacto en el producto interno bruto (PIB).</li>
                 <li>Analizar la interacción entre el ahorro nacional, la inversión y el saldo de la cuenta comercial (Identidad S - I = NX).</li>
             </ul>
 
             <p><strong>2. Desarrollo del proceso:</strong></p>
             <ul>
-                <li><strong>Manipulación de variables:</strong> Utilice los controles deslizantes de la izquierda para modificar el Gasto (G), Impuestos (T), Tipo de cambio (e) y el ingreso externo (Y*).</li>
-                <li><strong>Observación dinámica:</strong> Analice cómo los puntos de equilibrio se desplazan simultáneamente en los cuatro gráficos (Demanda Agregada, Presupuesto, Sector Externo y Ahorro-Inversión).</li>
-                <li><strong>Escenarios comparativos:</strong> Utilice el botón "Fijar escenario base" para establecer una línea de referencia y visualizar los cambios marginales (badges verdes/rojos) tras nuevas modificaciones.</li>
+                <li><strong>Manipulación de variables:</strong> utilice los controles deslizantes de la izquierda para modificar el gasto (G), impuestos (T), tipo de cambio (e) y el ingreso externo (Y*).</li>
+                <li><strong>Observación dinámica:</strong> analice cómo los puntos de equilibrio se desplazan simultáneamente en los cuatro gráficos (demanda agregada, presupuesto, sector externo y ahorro-inversión).</li>
+                <li><strong>Escenarios comparativos:</strong> utilice el botón "fijar escenario base" para establecer una línea de referencia y visualizar los cambios marginales (badges verdes/rojos) tras nuevas modificaciones.</li>
             </ul>
 
             <p><strong>3. Conclusión y verificación:</strong></p>
@@ -116,8 +152,36 @@
         </div>
 
         <button class="btn-start" onclick="document.getElementById('welcome-overlay').style.display='none'">
-            Ingresar al Simulador
+            Ingresar al simulador
         </button>
+    </div>
+</div>
+
+<div id="exercise-guide" onclick="this.style.display='none'">
+    <div class="guide-card" onclick="event.stopPropagation()">
+        <h2 style="color: var(--blue); border-bottom: 2px solid var(--uac-gold); padding-bottom: 10px; margin-top: 0;">Guía de Ejercicios Prácticos</h2>
+        <div style="font-size: 0.95rem; line-height: 1.6; color: var(--slate);">
+            <p><strong>Ejercicio 1: Multiplicador y política fiscal</strong><br>
+            1. En el simulador, haga clic en <b>"Fijar escenario base"</b>.<br>
+            2. Aumente el <b>Gasto público (G)</b> en 500 unidades (de 2000 a 2500).<br>
+            3. Observe el incremento en el <b>PIB (Y)</b>. Divida el aumento de Y entre el aumento de G. ¿Coincide con el valor de <b>α</b> mostrado en la tarjeta naranja?</p>
+            
+            <p><strong>Ejercicio 2: El Fenómeno de los déficits gemelos</strong><br>
+            1. Restablezca el escenario base y luego reduzca la <b>Tasa impositiva (t)</b> a 0.10.<br>
+            2. Observe el <b>Saldo Fiscal</b> en la tabla de identidades (se tornará rojo/negativo).<br>
+            3. Observe qué sucede simultáneamente con las <b>Exportaciones Netas (NX)</b>. ¿Por qué la expansión del ingreso reduce el superávit comercial?</p>
+            
+            <p><strong>Ejercicio 3: Choque externo y competitividad</strong><br>
+            1. Pulse el botón <b>"Simular crisis mundial"</b> (esto reduce Y* y deprecia la moneda).<br>
+            2. Identifique el impacto en la curva <b>NX</b> (Gráfico III).<br>
+            3. Intente compensar la caída del PIB aumentando el <b>Tipo de Cambio (e)</b> manualmente. ¿Qué efecto tiene esto sobre el equilibrio Ahorro-Inversión?</p>
+
+            <p><strong>Ejercicio 4: Verificación de identidades</strong><br>
+            1. Realice cualquier movimiento aleatorio en los controles.<br>
+            2. Diríjase a la última fila de la tabla: <b>Identidad S-I</b>.<br>
+            3. Compruebe que la resta del Ahorro Nacional menos la Inversión sea exactamente igual a las Exportaciones Netas. Explique el significado económico de esta igualdad.</p>
+        </div>
+        <button class="btn-action" style="margin-top: 20px; background: var(--blue);" onclick="document.getElementById('exercise-guide').style.display='none'">Continuar con la simulación</button>
     </div>
 </div>
 
@@ -131,7 +195,7 @@
 <div class="wrapper">
     <div class="sidebar">
         <div class="formula-card">
-            <strong>Identidades del Modelo:</strong><br>
+            <strong>Identidades del modelo:</strong><br>
             • Consumo: <b>C = 250 + 0.6Y<sub>d</sub></b><br>
             • Inversión: <b>I = 0.2Y - 1000i</b><br>
             • Condición: <b>S - I = NX</b>
@@ -156,6 +220,8 @@
             <label>PIB mundial (Y*): <span id="vYstar" class="val-display">5000</span></label>
             <input type="range" id="iYstar" min="2000" max="8000" step="100" value="5000">
         </div>
+        
+        <button onclick="document.getElementById('exercise-guide').style.display='flex'" class="btn-guide">📖 Guía de ejercicios</button>
         <button onclick="saveBase()" class="btn-action">Fijar escenario base</button>
         <button onclick="triggerCrisis()" class="btn-panic">Simular crisis mundial</button>
         <button onclick="exportData()" class="btn-action" style="background:#059669">Exportar reporte txt</button>
@@ -182,13 +248,30 @@
                 <thead>
                     <tr>
                         <th>Concepto</th>
-                        <th>Cálculo / Fórmula</th>
+                        <th>Cálculo / fórmula</th>
                         <th>Valor actual</th>
-                        <th>Estado / Nota</th>
+                        <th>Estado / nota</th>
                     </tr>
                 </thead>
                 <tbody id="eco-body"></tbody>
             </table>
+        </div>
+
+        <div class="theory-section">
+            <div class="theory-text">
+                <h3 style="color: var(--blue); margin-top: 0;">Fundamento: El equilibrio de la demanda agregada</h3>
+                <p style="font-size: 0.85rem; line-height: 1.4; color: var(--slate);">
+                    El equilibrio macroeconómico ocurre cuando la <strong>producción (Y)</strong> iguala a la <strong>demanda agregada (DA)</strong>. 
+                    En este modelo de economía abierta, cualquier aumento en el gasto autónomo (como G o X) desplaza la curva DA hacia arriba, generando un nuevo punto de intersección con la recta de 45°. 
+                    <br><br>
+                    La pendiente de la curva DA está determinada por la propensión marginal al consumo corregida por impuestos y la propensión a importar: 
+                    <br><strong>Pendiente = c(1-t) - m</strong>
+                </p>
+            </div>
+            <div class="theory-img">
+                <canvas id="chartTheory"></canvas>
+                <p style="font-size: 0.7rem; color: #64748b; text-align: center; margin-top: 5px;"><em>Esquema de determinación del ingreso de equilibrio</em></p>
+            </div>
         </div>
     </div>
 </div>
@@ -196,6 +279,14 @@
 <script>
     let base = null;
     let charts = {};
+
+    const chartTitles = {
+        DA: "I. Equilibrio del Mercado de Bienes (Modelo 45°)",
+        T: "II. Balance Presupuestario (Gasto vs Recaudación)",
+        NX: "III. Curva de Exportaciones Netas (Sector Externo)",
+        S: "IV. Equilibrio Ahorro-Inversión (Identidad S-I)",
+        Theory: "Determinación Teórica del Ingreso"
+    };
 
     function triggerCrisis() {
         document.getElementById('iYstar').value = 2500;
@@ -230,14 +321,14 @@
         const Y = A_const / (1 - (pendiente - m)); 
         const T = T0 + t * Y;
         const C = 250 + 0.6 * (Y - T);
-        const I = 0.2 * Y - 1000 * i;
+        const I = 0.2 * Y - 100 * i; 
         const X = 0.2 * Ystar - 100 * e;
         const IM = 0.2 * Y + 100 * e;
         const NX = X - IM;
         const Spriv = (Y - T) - C;
         const Spub = T - G;
         const Snac = Spriv + Spub;
-        return { G, T0, t, e, Ystar, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha };
+        return { G, T0, t, e, Ystar, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha, m };
     }
 
     function saveBase() { base = calc(); update(); }
@@ -293,19 +384,20 @@
         const xPos = cur.Y / 1000;
         
         const datasets = {
-            DA: [{ label: 'DA', data: labels.map(y => cur.A_const + (cur.pendiente - 0.2) * y), borderColor: '#2563eb', tension: 0 }, { label: '45°', data: labels, borderColor: '#cbd5e1', borderDash: [5,5], tension: 0 }],
+            DA: [{ label: 'DA', data: labels.map(y => cur.A_const + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: '45°', data: labels, borderColor: '#cbd5e1', borderDash: [5,5], tension: 0 }],
             T: [{ label: 'T', data: labels.map(y => cur.T0 + cur.t * y), borderColor: '#059669', tension: 0 }, { label: 'G', data: labels.map(() => cur.G), borderColor: '#dc2626', borderDash: [4,4], tension: 0 }],
             NX: [{ label: 'NX', data: labels.map(y => (0.2 * cur.Ystar - 100 * cur.e) - (0.2 * y + 100 * cur.e)), borderColor: '#7c3aed', tension: 0 }],
             S: [{ label: 'S_nac', data: labels.map(y => { 
                 let t_y = cur.T0 + cur.t * y; 
                 let c_y = 250 + 0.6 * (y - t_y); 
                 return (y - t_y - c_y) + (t_y - cur.G); 
-            }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => 0.2 * y - 40), borderColor: '#ea580c', tension: 0 }]
+            }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => 0.2 * y - 40), borderColor: '#ea580c', tension: 0 }],
+            Theory: [{ label: 'DA (Demanda)', data: labels.map(y => (cur.A_const/1.5) + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: 'Y = DA', data: labels, borderColor: '#334155', tension: 0 }]
         };
 
-        ['DA', 'T', 'NX', 'S'].forEach((id) => {
-            const ctx = document.getElementById('chart' + id);
-            const valY = id === 'DA' ? cur.Y : (id === 'T' ? cur.T : (id === 'NX' ? cur.NX : cur.Snac));
+        ['DA', 'T', 'NX', 'S', 'Theory'].forEach((id) => {
+            const ctx = document.getElementById('chart' + (id === 'Theory' ? 'Theory' : id));
+            const valY = id === 'DA' ? cur.Y : (id === 'T' ? cur.T : (id === 'NX' ? cur.NX : (id === 'Theory' ? cur.Y : cur.Snac)));
             
             let commonAnnotations = {
                 equilibrioLine: {
@@ -319,32 +411,8 @@
                 dot: {
                     type: 'point', xValue: xPos, yValue: valY,
                     backgroundColor: 'var(--blue)', radius: 5, borderColor: 'white', borderWidth: 2
-                },
-                valLabel: {
-                    type: 'label', xValue: xPos, yValue: valY,
-                    content: Math.round(valY).toString(),
-                    backgroundColor: 'white', color: 'var(--slate)',
-                    font: { size: 11, weight: 'bold' },
-                    position: 'right', xAdjust: 10, padding: 4
                 }
             };
-
-            if (id === 'T') {
-                commonAnnotations.statusLabel = {
-                    type: 'label', xValue: 7.5, yValue: 8000,
-                    content: [cur.Spub >= 0 ? 'ZONA SUPERÁVIT FISCAL' : 'ZONA DÉFICIT FISCAL'],
-                    backgroundColor: 'rgba(255,255,255,0.8)', color: cur.Spub >= 0 ? 'green' : 'red',
-                    font: { size: 12, weight: 'bold' }, padding: 6
-                };
-            } else if (id === 'NX') {
-                commonAnnotations.zeroLine = { type: 'line', yMin: 0, yMax: 0, borderColor: 'black', borderWidth: 1 };
-                commonAnnotations.statusLabel = {
-                    type: 'label', xValue: 7.5, yValue: 2000,
-                    content: [cur.NX >= 0 ? 'ZONA SUPERÁVIT COMERCIAL' : 'ZONA DÉFICIT COMERCIAL'],
-                    backgroundColor: 'rgba(255,255,255,0.8)', color: cur.NX >= 0 ? 'green' : 'red',
-                    font: { size: 12, weight: 'bold' }, padding: 6
-                };
-            }
 
             if (charts[id]) {
                 charts[id].data.datasets = datasets[id];
@@ -358,10 +426,14 @@
                         responsive: true, maintainAspectRatio: false, animation: false,
                         elements: { point: { radius: 0 } },
                         scales: { 
-                            y: { beginAtZero: false, suggestedMax: 10000 },
-                            x: { display: true, title: { display: true, text: 'Ingreso (Y)' } }
+                            y: { display: id !== 'Theory', beginAtZero: false, suggestedMax: 10000 },
+                            x: { display: id !== 'Theory', title: { display: true, text: 'Ingreso (Y)' } }
                         },
-                        plugins: { annotation: { annotations: commonAnnotations } }
+                        plugins: { 
+                            title: { display: true, text: chartTitles[id], font: { size: 14, weight: 'bold' }, padding: { bottom: 10 }, color: '#334155' },
+                            legend: { display: id === 'Theory' || id === 'T' || id === 'S' || id === 'DA' },
+                            annotation: { annotations: commonAnnotations } 
+                        }
                     }
                 });
             }
