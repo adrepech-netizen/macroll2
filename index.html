@@ -65,8 +65,32 @@
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
         
-        .wrapper { max-width: 1500px; margin: auto; display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
-        .sidebar { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .wrapper { 
+            max-width: 1500px; 
+            margin: auto; 
+            display: grid; 
+            grid-template-columns: 350px 1fr; 
+            gap: 20px; 
+            height: calc(100vh - 180px);
+        }
+        .sidebar { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            height: calc(100vh - 220px); 
+            overflow-y: auto; 
+            position: sticky; 
+            top: 0;
+        }
+        .main-content { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            overflow-y: auto; 
+            padding-right: 10px;
+        }
+
         .formula-card { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; border-left: 4px solid var(--blue); }
         .control-group { margin-bottom: 12px; }
         label { display: block; font-weight: 600; font-size: 0.8rem; margin-bottom: 3px; color: var(--slate); }
@@ -81,8 +105,7 @@
         .res-item { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: var(--slate); }
         .res-val { font-weight: bold; }
 
-        .main-content { display: flex; flex-direction: column; gap: 20px; }
-        .chart-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 380px; }
+        .chart-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); min-height: 380px; }
         .logic-panel { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; }
         
         .instructional-content h3 { color: var(--blue); margin-top: 20px; font-size: 1.2rem; border-left: 4px solid var(--uac-gold); padding-left: 10px; }
@@ -114,7 +137,6 @@
         .btn-start { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 25px; transition: 0.3s; }
         .btn-start:hover { background: #172554; }
 
-        /* Estilo Bloque de Créditos */
         .academic-credits {
             background: white;
             padding: 25px;
@@ -130,6 +152,9 @@
         .credit-info h4 { margin: 0 0 8px 0; color: var(--blue); font-size: 1.1rem; }
         .credit-info p { margin: 4px 0; font-size: 0.85rem; color: var(--slate); }
         .credit-logo { text-align: center; border-right: 1px solid #e2e8f0; padding-right: 20px; }
+        
+        /* Estilo para los ejercicios */
+        .exercise-item { margin-bottom: 15px; padding: 10px; border-left: 4px solid var(--uac-gold); background: #f8fafc; border-radius: 0 8px 8px 0; }
     </style>
 </head>
 <body>
@@ -160,9 +185,9 @@
 
             <p><strong>2. Desarrollo del proceso:</strong></p>
             <ul>
-                <li><strong>Manipulación de variables:</strong> utilice los controles deslizantes de la izquierda para modificar el gasto (G), impuestos (T), tipo de cambio (e) y el ingreso externo (Y*).</li>
-                <li><strong>Observación dinámica:</strong> analice cómo los puntos de equilibrio se desplazan simultáneamente en los cuatro gráficos (demanda agregada, presupuesto, sector externo y ahorro-inversión).</li>
-                <li><strong>Escenarios comparativos:</strong> utilice el botón "fijar escenario base" para establecer una línea de referencia y visualizar los cambios marginales (badges verdes/rojos) tras nuevas modificaciones.</li>
+                <li><strong>Manipulación de variables:</strong> Utilice los controles deslizantes de la izquierda para modificar el gasto (G), impuestos (T), tipo de cambio (e) y el ingreso externo (Y*).</li>
+                <li><strong>Observación dinámica:</strong> Analice cómo los puntos de equilibrio se desplazan simultáneamente en los cuatro gráficos (demanda agregada, presupuesto, sector externo y ahorro-inversión).</li>
+                <li><strong>Escenarios comparativos:</strong> Utilice el botón "Fijar escenario base" para establecer una línea de referencia y visualizar los cambios marginales (badges verdes/rojos) tras nuevas modificaciones.</li>
             </ul>
 
             <p><strong>3. Conclusión y verificación:</strong></p>
@@ -177,33 +202,44 @@
 
 <div id="exercise-guide" onclick="this.style.display='none'">
     <div class="guide-card" onclick="event.stopPropagation()">
-        <h2 style="color: var(--blue); border-bottom: 2px solid var(--uac-gold); padding-bottom: 10px; margin-top: 0;">Guía de Ejercicios Prácticos</h2>
+        <h2 style="color: var(--blue); border-bottom: 2px solid var(--uac-gold); padding-bottom: 10px; margin-top: 0;">Guía de ejercicios prácticos</h2>
         <div style="font-size: 0.95rem; line-height: 1.6; color: var(--slate);">
-            <p><strong>Ejercicio 1: Sensibilidad del Consumo y Multiplicador</strong><br>
-            1. Haga clic en <b>"Fijar escenario base"</b>.<br>
-            2. Aumente la <b>Propensión marginal a consumir (c)</b> de 0.60 a 0.80.<br>
-            3. Observe la tarjeta naranja: ¿Qué sucedió con el <b>Multiplicador (α)</b>? <br>
-            4. Ahora aumente el <b>Gasto (G)</b> en 200 unidades. Compare el crecimiento del PIB con este multiplicador alto frente al escenario original.</p>
             
-            <p><strong>Ejercicio 2: El Consumo Autónomo y la Demanda Agregada</strong><br>
-            1. Restablezca el simulador y fije base. Aumente el <b>Consumo autónomo (C₀)</b> a 750.<br>
-            2. Observe el Gráfico I: ¿Cómo se desplaza la curva DA? <br>
-            3. Verifique en la tabla de identidades el nuevo nivel de <b>Ahorro Privado</b>. ¿Por qué un mayor consumo autónomo reduce inicialmente el ahorro si el ingreso no aumenta proporcionalmente?</p>
+            <div class="exercise-item">
+                <strong>Ejercicio 1: Sensibilidad del consumo y multiplicador</strong><br>
+                1. Haga clic en <b>"Fijar escenario base"</b>.<br>
+                2. Aumente la <b>Propensión marginal a consumir (c)</b> de 0.60 a 0.80.<br>
+                3. Observe la tarjeta naranja: ¿Qué sucedió con el <b>Multiplicador (α)</b>? <br>
+                4. Ahora aumente el <b>Gasto (G)</b> en 200 unidades. Compare el crecimiento del PIB con este multiplicador alto frente al escenario original.
+            </div>
+
+            <div class="exercise-item">
+                <strong>Ejercicio 2: Inversión, tasa de interés y política monetaria</strong><br>
+                1. Restablezca el escenario base. En este modelo, la inversión se define como <b>I = I₀ + bY - gi</b>.<br>
+                2. Suponga que el banco central reduce la <b>Tasa de interés (i)</b>. Observe cómo reacciona la inversión y el PIB.<br>
+                3. Observe el <b>Gráfico IV (S-I)</b>: ¿Cómo afecta una mayor inversión al equilibrio entre el ahorro nacional y las exportaciones netas?
+            </div>
             
-            <p><strong>Ejercicio 3: Política Fiscal y Déficits Gemelos</strong><br>
-            1. Reduzca la <b>Tasa impositiva (t)</b> a 0.10 y aumente <b>G</b> a 2500.<br>
-            2. Observe el <b>Saldo Fiscal</b> y las <b>Exportaciones Netas (NX)</b>. <br>
-            3. Analice cómo el aumento del ingreso (estimulado por la baja de impuestos y el consumo) termina deteriorando la balanza comercial.</p>
+            <div class="exercise-item">
+                <strong>Ejercicio 3: El consumo autónomo y la demanda agregada</strong><br>
+                1. Restablezca el simulador y fije base. Aumente el <b>Consumo autónomo (C₀)</b> a 750.<br>
+                2. Observe el Gráfico I: ¿Cómo se desplaza la curva DA? <br>
+                3. Verifique en la tabla de identidades el nuevo nivel de <b>Ahorro privado</b>. ¿Por qué un mayor consumo autónomo reduce inicialmente el ahorro si el ingreso no aumenta proporcionalmente?
+            </div>
+            
+            <div class="exercise-item">
+                <strong>Ejercicio 4: Política fiscal y déficits gemelos</strong><br>
+                1. Reduzca la <b>Tasa impositiva (t)</b> a 0.10 y aumente <b>G</b> a 2500.<br>
+                2. Observe el <b>Saldo fiscal</b> y las <b>Exportaciones netas (NX)</b>. <br>
+                3. Analice cómo el aumento del ingreso (estimulado por la baja de impuestos y el consumo) termina deteriorando la balanza comercial.
+            </div>
 
-            <p><strong>Ejercicio 4: Identidad S-I en Economía Abierta</strong><br>
-            1. Realice cambios en <b>Y* (PIB Mundial)</b> y <b>e (Tipo de cambio)</b>.<br>
-            2. Diríjase a la última fila de la tabla: <b>Identidad S-I</b>.<br>
-            3. Compruebe que la diferencia entre Ahorro Nacional e Inversión siempre iguala a NX. Explique cómo el sector externo financia las brechas de ahorro doméstico.</p>
-
-            <p><strong>Ejercicio 5: Transmisión internacional y choques externos</strong><br>
-            1. Fije escenario base. Incremente el <b>PIB mundial (Y*)</b> de 5000 a 7000.<br>
-            2. Observe el Gráfico III: ¿Cómo afecta el crecimiento de nuestros socios comerciales a las <b>Exportaciones Netas (NX)</b>?<br>
-            3. Analice el Gráfico I: ¿En cuántas unidades aumentó el PIB local sin necesidad de aumentar el Gasto Público? Este es el efecto de la demanda externa.</p>
+            <div class="exercise-item">
+                <strong>Ejercicio 5: Identidad S-I en economía abierta</strong><br>
+                1. Realice cambios en <b>Y* (PIB mundial)</b> y <b>e (Tipo de cambio)</b>.<br>
+                2. Diríjase a la última fila de la tabla: <b>Identidad S-I</b>.<br>
+                3. Compruebe que la diferencia entre ahorro nacional e inversión siempre iguala a NX. Explique cómo el sector externo financia las brechas de ahorro doméstico.
+            </div>
         </div>
         <button class="btn-action" style="margin-top: 20px; background: var(--blue);" onclick="document.getElementById('exercise-guide').style.display='none'">Continuar con la simulación</button>
     </div>
@@ -219,39 +255,85 @@
 <div class="wrapper">
     <div class="sidebar">
         <div class="formula-card">
-            <strong>Identidades del modelo:</strong><br>
-            • Consumo: <b>C = C₀ + cY<sub>d</sub></b><br>
-            • Inversión: <b>I = 0.2Y - 1000i</b><br>
-            • Condición: <b>S - I = NX</b>
+            <strong>Ecuaciones del modelo:</strong><br>
+            • C = C₀ + c(Y - T)<br>
+            • I = I₀ + bY - gi<br>
+            • T = T₀ + tY<br>
+            • IM = IM₀ + mY + n_im * e<br>
+            • X = X₀ + x_ext * Y* - n_ex * e<br>
+            • NX = X - IM<br>
+            • DA = C + I + G + NX<br>
+            • α = 1 / [1 - c(1-t) - b + m]
         </div>
+        
         <div class="control-group">
             <label>Consumo autónomo (C₀): <span id="vC0" class="val-display">250</span></label>
-            <input type="range" id="iC0" min="0" max="1000" step="50" value="250">
+            <input type="range" id="iC0" min="0" max="1000" step="50" value="250" oninput="update()">
         </div>
         <div class="control-group">
-            <label>Prop. marginal a consumir (c): <span id="vc" class="val-display">0.60</span></label>
-            <input type="range" id="ic" min="0.1" max="0.9" step="0.05" value="0.60">
+            <label>Propensión marginal a consumir (c): <span id="vc" class="val-display">0.60</span></label>
+            <input type="range" id="ic" min="0.1" max="0.9" step="0.05" value="0.60" oninput="update()">
         </div>
+
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        
+        <div class="control-group">
+            <label>Inversión autónoma (I₀): <span id="vI0" class="val-display">500</span></label>
+            <input type="range" id="iI0" min="0" max="1500" step="50" value="500" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Sensibilidad al ingreso (b): <span id="vb" class="val-display">0.20</span></label>
+            <input type="range" id="ib" min="0" max="0.4" step="0.01" value="0.20" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Tasa de interés (i): <span id="vi" class="val-display">0.05</span></label>
+            <input type="range" id="ii" min="0.01" max="0.2" step="0.01" value="0.05" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Sensibilidad al interés (g): <span id="vg" class="val-display">1000</span></label>
+            <input type="range" id="ig" min="0" max="5000" step="100" value="1000" oninput="update()">
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+
         <div class="control-group">
             <label>Gasto público (G): <span id="vG" class="val-display">2000</span></label>
-            <input type="range" id="iG" min="500" max="4000" step="100" value="2000">
+            <input type="range" id="iG" min="500" max="4000" step="100" value="2000" oninput="update()">
         </div>
         <div class="control-group">
-            <label>Impuestos autónomos (T₀): <span id="vT0" class="val-display">500</span></label>
-            <input type="range" id="iT0" min="0" max="1500" step="50" value="500">
+            <label>Impuestos autónomos (T₀): <span id="vT0" class="val-display">0</span></label>
+            <input type="range" id="iT0" min="0" max="1000" step="50" value="0" oninput="update()">
         </div>
         <div class="control-group">
             <label>Tasa impositiva (t): <span id="vt" class="val-display">0.20</span></label>
-            <input type="range" id="it" min="0" max="0.4" step="0.01" value="0.20">
+            <input type="range" id="it" min="0" max="0.4" step="0.01" value="0.20" oninput="update()">
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+
+        <div class="control-group">
+            <label>Exportaciones autónomas (X₀): <span id="vX0" class="val-display">500</span></label>
+            <input type="range" id="iX0" min="0" max="2000" step="100" value="500" oninput="update()">
         </div>
         <div class="control-group">
-            <label>Tipo de cambio (e): <span id="ve" class="val-display">1.0</span></label>
-            <input type="range" id="ie" min="0.5" max="2.5" step="0.1" value="1.0">
+            <label>Sensibilidad ingreso externo (x_ext): <span id="vx_ext" class="val-display">0.20</span></label>
+            <input type="range" id="ix_ext" min="0" max="0.5" step="0.01" value="0.20" oninput="update()">
         </div>
         <div class="control-group">
             <label>PIB mundial (Y*): <span id="vYstar" class="val-display">5000</span></label>
-            <input type="range" id="iYstar" min="2000" max="8000" step="100" value="5000">
+            <input type="range" id="iYstar" min="2000" max="8000" step="100" value="5000" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Importaciones autónomas (IM₀): <span id="vIM0" class="val-display">100</span></label>
+            <input type="range" id="iIM0" min="0" max="1000" step="50" value="100" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Propensión marginal a importar (m): <span id="vm" class="val-display">0.20</span></label>
+            <input type="range" id="im" min="0.05" max="0.5" step="0.01" value="0.20" oninput="update()">
+        </div>
+        <div class="control-group">
+            <label>Tipo de cambio (e): <span id="ve" class="val-display">1.0</span></label>
+            <input type="range" id="ie" min="0.5" max="2.5" step="0.1" value="1.0" oninput="update()">
         </div>
         
         <button onclick="document.getElementById('exercise-guide').style.display='flex'" class="btn-guide">📖 Guía de ejercicios</button>
@@ -259,13 +341,10 @@
         <button onclick="triggerCrisis()" class="btn-panic">Simular crisis mundial</button>
         <button onclick="exportData()" class="btn-action" style="background:#059669">Exportar reporte txt</button>
         
-        <div id="results-quick-summary" class="results-summary"></div>
-
-        <div class="formula-card" style="margin-top:15px; border-left-color: var(--orange);">
+        <div class="formula-card" style="margin-top:20px; border-left-color: var(--orange);">
             <strong>Multiplicador (α): <span id="valAlpha">1.92</span></strong><br>
-            <small>Indica el efecto amplificador del gasto autónomo sobre el ingreso. Considera (c), (t) y la propensión a importar (m=0.2).</small>
+            <small>Basado en propensiones marginales y tasa impositiva.</small>
         </div>
-
         <div id="stability-alert"></div>
     </div>
 
@@ -281,9 +360,9 @@
                 <thead>
                     <tr>
                         <th>Concepto</th>
-                        <th>Cálculo / fórmula</th>
+                        <th>Estructura de la ecuación</th>
                         <th>Valor actual</th>
-                        <th>Estado / nota</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody id="eco-body"></tbody>
@@ -292,13 +371,12 @@
 
         <div class="theory-section">
             <div class="theory-text">
-                <h3 style="color: var(--blue); margin-top: 0;">Fundamento: El equilibrio de la demanda agregada</h3>
+                <h3 style="color: var(--blue); margin-top: 0;">Fundamento: el equilibrio de la demanda agregada</h3>
                 <p style="font-size: 0.85rem; line-height: 1.4; color: var(--slate);">
                     El equilibrio macroeconómico ocurre cuando la <strong>producción (Y)</strong> iguala a la <strong>demanda agregada (DA)</strong>. 
-                    En este modelo de economía abierta, cualquier aumento en el gasto autónomo (como G o X) desplaza la curva DA hacia arriba, generando un nuevo punto de intersección con la recta de 45°. 
+                    En este modelo, cualquier cambio en los componentes autónomos desplaza la curva DA, afectando el ingreso y los saldos gemelos.
                     <br><br>
-                    La pendiente de la curva DA está determinada por la propensión marginal al consumo corregida por impuestos y la propensión a importar: 
-                    <br><strong>Pendiente = c(1-t) - m</strong>
+                    <strong>Pendiente DA = [c(1-t) + b - m]</strong>
                 </p>
             </div>
             <div class="theory-img">
@@ -330,22 +408,23 @@
     let charts = {};
 
     const chartTitles = {
-        DA: "I. Equilibrio del Mercado de Bienes (Modelo 45°)",
-        T: "II. Balance Presupuestario (Gasto vs Recaudación)",
-        NX: "III. Curva de Exportaciones Netas (Sector Externo)",
-        S: "IV. Equilibrio Ahorro-Inversión (Identidad S-I)",
-        Theory: "Determinación Teórica del Ingreso"
+        DA: "I. Equilibrio del mercado de bienes (Modelo 45°)",
+        T: "II. Balance presupuestario (Gasto vs. Recaudación)",
+        NX: "III. Curva de exportaciones netas (Sector externo)",
+        S: "IV. Equilibrio ahorro-inversión (Identidad S-I)",
+        Theory: "Determinación teórica del ingreso"
     };
 
     function triggerCrisis() {
         document.getElementById('iYstar').value = 2500;
         document.getElementById('ie').value = 2.0;
+        document.getElementById('ii').value = 0.15;
         update();
     }
 
     function exportData() {
         const cur = calc();
-        const content = `REPORTE MACROECONÓMICO - UAC\n----------------------------------\nTITULAR: DR. ADRIÁN EDUARDO PECH QUIIJANO\nPIB Total (Y): ${Math.round(cur.Y)}\nMultiplicador: ${cur.alpha.toFixed(2)}\nRecaudación (T): ${Math.round(cur.T)}\nConsumo (C): ${Math.round(cur.C)}\nInversión (I): ${Math.round(cur.I)}\nSaldo Fiscal: ${Math.round(cur.Spub)}\nSaldo Comercial (NX): ${Math.round(cur.NX)}`;
+        const content = `REPORTE MACROECONÓMICO - UAC\n----------------------------------\nTITULAR: DR. ADRIÁN EDUARDO PECH QUIJANO\nPIB Total (Y): ${Math.round(cur.Y)}\nMultiplicador: ${cur.alpha.toFixed(2)}\nConsumo (C): ${Math.round(cur.C)}\nInversión (I): ${Math.round(cur.I)}\nSaldo Comercial (NX): ${Math.round(cur.NX)}`;
         const blob = new Blob([content], {type: 'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -361,25 +440,33 @@
         const Ystar = +document.getElementById('iYstar').value;
         const C0 = +document.getElementById('iC0').value; 
         const c = +document.getElementById('ic').value;   
+        const I0 = +document.getElementById('iI0').value;
+        const b = +document.getElementById('ib').value;
+        const i = +document.getElementById('ii').value;
+        const g = +document.getElementById('ig').value;
+        const m = +document.getElementById('im').value;
         
-        const i = 0.04; 
-        const m = 0.2;
+        const X0 = +document.getElementById('iX0').value;
+        const x_ext = +document.getElementById('ix_ext').value;
+        const IM0 = +document.getElementById('iIM0').value;
         
-        const alpha = 1 / (1 - (c * (1 - t)) + m); 
-
-        const A_const = C0 - (c * T0) - (1000 * i) + G + (0.2 * Ystar) - (200 * e);
-        const pendiente = c * (1 - t); 
-        const Y = A_const / (1 - (pendiente - m)); 
-        const T = T0 + t * Y;
+        const X_total = X0 + (x_ext * Ystar) - (100 * e);
+        const alpha = 1 / (1 - (c * (1 - t)) - b + m); 
+        const A_const = C0 - (c * T0) + I0 - (g * i) + G + X_total - (IM0 + 100 * e);
+        const pendiente = c * (1 - t) + b;
+        
+        const Y = Math.max(0, A_const * alpha);
+        const T = T0 + (t * Y);
         const C = C0 + c * (Y - T);
-        const I = 0.2 * Y - 100 * i; 
-        const X = 0.2 * Ystar - 100 * e;
-        const IM = 0.2 * Y + 100 * e;
+        const I = I0 + b * Y - g * i;
+        const X = X_total;
+        const IM = IM0 + m * Y + 100 * e;
         const NX = X - IM;
         const Spriv = (Y - T) - C;
         const Spub = T - G;
         const Snac = Spriv + Spub;
-        return { G, T0, t, e, Ystar, C0, c, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha, m };
+        
+        return { G, T0, t, e, Ystar, C0, c, I0, b, i, g, Y, T, C, I, X, IM, NX, Spriv, Spub, Snac, A_const, pendiente, alpha, m, X0, x_ext, IM0 };
     }
 
     function saveBase() { base = calc(); update(); }
@@ -397,55 +484,43 @@
             return `<span class="delta-badge ${cls}">${diff > 0 ? '+' : ''}${isDec ? diff.toFixed(2) : diff}</span>`;
         };
 
-        ['G','T0','t','e','Ystar','C0','c'].forEach(k => {
+        ['G','T0','t','e','Ystar','C0','c','I0','b','i','g','m','X0','x_ext','IM0'].forEach(k => {
             const el = document.getElementById('v'+k);
             if(el) {
-                const decimales = (k === 't' || k === 'e' || k === 'c');
+                const decimales = (k === 't' || k === 'e' || k === 'c' || k === 'b' || k === 'i' || k === 'm' || k === 'x_ext');
                 el.innerHTML = `${decimales ? cur[k].toFixed(2) : cur[k]}${getDeltaLabel(cur[k], base[k], decimales)}`;
             }
         });
 
         document.getElementById('valAlpha').innerText = cur.alpha.toFixed(2);
 
-        const resultsDiv = document.getElementById('results-quick-summary');
-        const items = [
-            { l: 'PIB Total (Y)', v: cur.Y, b: base.Y },
-            { l: 'Consumo (C)', v: cur.C, b: base.C },
-            { l: 'Saldo Fiscal', v: cur.Spub, b: base.Spub },
-            { l: 'Export. Netas', v: cur.NX, b: base.NX }
-        ];
-
-        resultsDiv.innerHTML = items.map(it => `
-            <div class="res-item">
-                <span>${it.l}:</span>
-                <span class="res-val">${fmt(it.v)} ${getDeltaLabel(it.v, it.b)}</span>
-            </div>
-        `).join('');
-
         document.getElementById('eco-body').innerHTML = `
-            <tr><td><b>PIB (Y)</b></td><td>α * A_autónomo</td><td><b>${fmt(cur.Y)}</b></td><td>Producción de equilibrio</td></tr>
-            <tr><td>Consumo (C)</td><td>${cur.C0} + ${cur.c}(Y-T)</td><td>${fmt(cur.C)}</td><td>Gasto de hogares</td></tr>
-            <tr><td>Inversión (I)</td><td>0.2Y - 1000(0.04)</td><td>${fmt(cur.I)}</td><td>Formación de capital</td></tr>
-            <tr><td>Saldo Fiscal</td><td>T - G</td><td style="color:${cur.Spub >= 0 ? 'green' : 'red'}"><b>${fmt(cur.Spub)}</b></td><td>${cur.Spub >= 0 ? 'Superávit' : 'Déficit'} Presupuestal</td></tr>
-            <tr><td>Sector Externo (NX)</td><td>X - IM</td><td style="color:${cur.NX >= 0 ? 'green' : 'red'}"><b>${fmt(cur.NX)}</b></td><td>${cur.NX >= 0 ? 'Superávit' : 'Déficit'} Comercial</td></tr>
-            <tr style="background: #f1f5f9; font-weight: bold;"><td>Identidad S-I</td><td>(S_nac - I) = NX</td><td>${fmt(cur.Snac - cur.I)} = ${fmt(cur.NX)}</td><td style="color:var(--blue)">Equilibrio Verificado</td></tr>`;
+            <tr><td><b>PIB (Y)</b></td><td>Y = α * A_autónomo</td><td><b>${fmt(cur.Y)}</b></td><td>Equilibrio</td></tr>
+            <tr><td>Consumo (C)</td><td>C = C₀ + c(Y - T)</td><td>${fmt(cur.C)}</td><td>Hogares</td></tr>
+            <tr><td>Inversión (I)</td><td>I = I₀ + bY - gi</td><td>${fmt(cur.I)}</td><td>Capital</td></tr>
+            <tr><td>Ahorro privado (S_p)</td><td>(Y - T) - C</td><td>${fmt(cur.Spriv)}</td><td>Hogares</td></tr>
+            <tr><td>Saldo fiscal (S_g)</td><td>(T₀ + tY) - G</td><td style="color:${cur.Spub >= 0 ? 'green' : 'red'}"><b>${fmt(cur.Spub)}</b></td><td>${cur.Spub >= 0 ? 'Superávit' : 'Déficit'}</td></tr>
+            <tr><td>Ahorro nacional (S)</td><td>S_p + S_g</td><td>${fmt(cur.Snac)}</td><td>Nacional</td></tr>
+            <tr><td>Sector externo (NX)</td><td>NX = X - IM</td><td style="color:${cur.NX >= 0 ? 'green' : 'red'}"><b>${fmt(cur.NX)}</b></td><td>${cur.NX >= 0 ? 'Superávit' : 'Déficit'}</td></tr>
+            <tr style="background: #f1f5f9; font-weight: bold;"><td>Identidad S-I</td><td>(S - I) = NX</td><td>${fmt(cur.Snac - cur.I)} = ${fmt(cur.NX)}</td><td style="color:var(--blue)">Verificado</td></tr>`;
             
         render(cur);
     }
 
     function render(cur) {
-        const labels = Array.from({length: 16}, (_, i) => i * 1000);
-        const xPos = cur.Y / 1000;
+        const maxRange = Math.max(15000, cur.Y * 1.5);
+        const labels = Array.from({length: 21}, (_, i) => i * (maxRange / 20));
+        const xPos = cur.Y;
         
         const datasets = {
-            DA: [{ label: 'DA', data: labels.map(y => cur.A_const + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: '45°', data: labels, borderColor: '#cbd5e1', borderDash: [5,5], tension: 0 }],
-            T: [{ label: 'T', data: labels.map(y => cur.T0 + cur.t * y), borderColor: '#059669', tension: 0 }, { label: 'G', data: labels.map(() => cur.G), borderColor: '#dc2626', borderDash: [4,4], tension: 0 }],
-            NX: [{ label: 'NX', data: labels.map(y => (0.2 * cur.Ystar - 100 * cur.e) - (0.2 * y + 100 * cur.e)), borderColor: '#7c3aed', tension: 0 }],
+            DA: [{ label: 'DA', data: labels.map(y => (cur.C0 - cur.c*cur.T0 + cur.I0 - cur.g*cur.i + cur.G + cur.X - (cur.IM0 + 100*cur.e)) + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: '45°', data: labels, borderColor: '#cbd5e1', borderDash: [5,5], tension: 0 }],
+            T: [{ label: 'T (Recaudación)', data: labels.map(y => cur.T0 + cur.t * y), borderColor: '#059669', tension: 0 }, { label: 'G (Gasto)', data: labels.map(() => cur.G), borderColor: '#dc2626', borderDash: [4,4], tension: 0 }],
+            NX: [{ label: 'NX', data: labels.map(y => cur.X - (cur.IM0 + cur.m * y + 100 * cur.e)), borderColor: '#7c3aed', tension: 0, fill: { target: 'origin', above: 'rgba(124, 58, 237, 0.1)', below: 'rgba(220, 38, 38, 0.1)' } }],
             S: [{ label: 'S_nac', data: labels.map(y => { 
                 let t_y = cur.T0 + cur.t * y; 
                 let c_y = cur.C0 + cur.c * (y - t_y); 
                 return (y - t_y - c_y) + (t_y - cur.G); 
-            }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => 0.2 * y - 40), borderColor: '#ea580c', tension: 0 }],
+            }), borderColor: '#059669', tension: 0 }, { label: 'I', data: labels.map(y => cur.I0 + cur.b * y - cur.g * cur.i), borderColor: '#ea580c', tension: 0 }],
             Theory: [{ label: 'DA (Demanda)', data: labels.map(y => (cur.A_const/1.5) + (cur.pendiente - cur.m) * y), borderColor: '#2563eb', tension: 0 }, { label: 'Y = DA', data: labels, borderColor: '#334155', tension: 0 }]
         };
 
@@ -453,7 +528,7 @@
             const ctx = document.getElementById('chart' + (id === 'Theory' ? 'Theory' : id));
             const valY = id === 'DA' ? cur.Y : (id === 'T' ? cur.T : (id === 'NX' ? cur.NX : (id === 'Theory' ? cur.Y : cur.Snac)));
             
-            let commonAnnotations = {
+            let annotations = {
                 equilibrioLine: {
                     type: 'line', xMin: xPos, xMax: xPos,
                     borderColor: 'rgba(30, 64, 175, 0.4)', borderWidth: 2, borderDash: [6, 6],
@@ -468,9 +543,36 @@
                 }
             };
 
+            if (id === 'NX') {
+                annotations.zeroLine = {
+                    type: 'line', yMin: 0, yMax: 0,
+                    borderColor: '#64748b', borderWidth: 2,
+                    label: {
+                        display: true, content: 'Equilibrio comercial (NX=0)', position: 'end',
+                        backgroundColor: '#64748b', color: 'white', font: { size: 9 }
+                    }
+                };
+                annotations.textEstado = {
+                    type: 'label', xValue: maxRange * 0.5, yValue: cur.NX >= 0 ? maxRange * 0.1 : -maxRange * 0.1,
+                    content: cur.NX >= 0 ? 'SUPERÁVIT COMERCIAL' : 'DÉFICIT COMERCIAL',
+                    color: cur.NX >= 0 ? '#065f46' : '#b91c1c',
+                    font: { size: 14, weight: 'bold' }
+                };
+            }
+
+            if (id === 'T') {
+                annotations.textEstado = {
+                    type: 'label', xValue: maxRange * 0.5, yValue: maxRange * 0.4,
+                    content: cur.Spub >= 0 ? 'SUPERÁVIT FISCAL' : 'DÉFICIT FISCAL',
+                    color: cur.Spub >= 0 ? '#065f46' : '#b91c1c',
+                    font: { size: 14, weight: 'bold' }
+                };
+            }
+
             if (charts[id]) {
+                charts[id].data.labels = labels;
                 charts[id].data.datasets = datasets[id];
-                charts[id].options.plugins.annotation.annotations = commonAnnotations;
+                charts[id].options.plugins.annotation.annotations = annotations;
                 charts[id].update('none');
             } else {
                 charts[id] = new Chart(ctx, {
@@ -480,21 +582,27 @@
                         responsive: true, maintainAspectRatio: false, animation: false,
                         elements: { point: { radius: 0 } },
                         scales: { 
-                            y: { display: id !== 'Theory', beginAtZero: false, suggestedMax: 10000 },
-                            x: { display: id !== 'Theory', title: { display: true, text: 'Ingreso (Y)' } }
+                            y: { display: id !== 'Theory', beginAtZero: false },
+                            x: { 
+                                display: id !== 'Theory', 
+                                title: { display: true, text: 'Ingreso (Y)' },
+                                ticks: { callback: function(value) { return Math.round(this.getLabelForValue(value)); } }
+                            }
                         },
-                        plugins: { 
-                            title: { display: true, text: chartTitles[id], font: { size: 14, weight: 'bold' }, padding: { bottom: 10 }, color: '#334155' },
-                            legend: { display: id === 'Theory' || id === 'T' || id === 'S' || id === 'DA' },
-                            annotation: { annotations: commonAnnotations } 
+                        plugins: {
+                            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+                            title: { display: true, text: chartTitles[id], color: '#1e293b', font: { size: 14, weight: 'bold' } },
+                            annotation: { annotations: annotations }
                         }
                     }
                 });
             }
         });
     }
-    window.onload = update;
-    document.querySelectorAll('input').forEach(i => i.addEventListener('input', update));
+
+    // Inicialización
+    window.onload = () => { update(); };
 </script>
+
 </body>
 </html>
