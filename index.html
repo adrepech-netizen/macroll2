@@ -7,6 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
     <style>
+        
+	.bg-crisis { background-color: #b91c1c !important; color: white !important; }
+.text-crisis { color: #b91c1c !important; }
         :root { --blue: #1e40af; --red: #b91c1c; --green: #065f46; --orange: #c2410c; --slate: #334155; --uac-gold: #b89c5e; }
         body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
         
@@ -327,6 +330,7 @@
         <button class="btn-action" style="background: #065f46; margin-top: 8px;" onclick="exportToCSV()">
                     📥 Exportar Escenario (CSV)
                     </button>
+        <button class="btn-action" style="background: #475569; margin-top: 8px;" onclick="clearBase()">🗑️ Limpiar escenario base</button>
     </div>
 
     <div class="main-content">
@@ -339,7 +343,6 @@
 
 <div class="logic-panel">
     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-        
         <div style="background: #fff7ed; padding: 25px; border-radius: 8px; border: 1px solid #ffedd5; text-align: center;">
             <label style="color: #9a3412; font-size: 1rem;">Multiplicador (α)</label>
             <div id="res_alpha" class="res-val" style="font-size: 2.2rem; color: #c2410c;">-</div>
@@ -357,41 +360,24 @@
             <div id="res_NX" class="res-val" style="font-size: 2.2rem; color: #1d4ed8;">-</div>
         </div>
 
-        <div style="background: #eff6ff; padding: 25px; border-radius: 8px; border: 1px solid #dbeafe; text-align: center;">
-            <label style="color: #1e40af; font-size: 1rem;">Consumo (C)</label>
-            <div id="res_C" class="res-val" style="font-size: 2.2rem; color: #1e40af;">-</div>
+        <div style="background: #f0fdfa; padding: 25px; border-radius: 8px; border: 1px solid #ccfbf1; text-align: center;">
+            <label style="color: #134e4a; font-size: 1rem;">Ingreso Disponible (Yd)</label>
+            <div id="res_Yd" class="res-val" style="font-size: 2.2rem; color: #0f766e;">-</div>
         </div>
         <div style="background: #f8fafc; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
             <label style="color: #334155; font-size: 1rem;">Inversión (I)</label>
             <div id="res_I" class="res-val" style="font-size: 2.2rem; color: #334155;">-</div>
         </div>
-        <div style="background: #f0fdf4; padding: 25px; border-radius: 8px; border: 1px solid #dcfce7; text-align: center;">
-            <label style="color: #065f46; font-size: 1rem;">Ahorro Privado (Sp)</label>
-            <div id="res_Sp" class="res-val" style="font-size: 2.2rem; color: #065f46;">-</div>
+        <div style="background: #fdf4ff; padding: 25px; border-radius: 8px; border: 1px solid #fae8ff; text-align: center;">
+            <label style="color: #701a75; font-size: 1rem;">Ahorro Nacional (S)</label>
+            <div id="res_S" class="res-val" style="font-size: 2.2rem; color: #a21caf;">-</div>
         </div>
         <div style="background: #fffbeb; padding: 25px; border-radius: 8px; border: 1px solid #fef3c7; text-align: center;">
-            <label style="color: #92400e; font-size: 1rem;">Identidad (S - I)</label>
+            <label style="color: #92400e; font-size: 1rem;">Brecha (S - I)</label>
             <div id="res_SI" class="res-val" style="font-size: 2.2rem; color: #b89c5e;">-</div>
         </div>
-        <div style="background: #fdf4ff; padding: 25px; border-radius: 8px; border: 1px solid #fae8ff; text-align: center;">
-        <label style="color: #701a75; font-size: 1rem;">Ahorro Nacional (S)</label>
-        <div id="res_S" class="res-val" style="font-size: 2.2rem; color: #a21caf;">-</div>
-        </div>
-        <div style="background: #f0fdfa; padding: 25px; border-radius: 8px; border: 1px solid #ccfbf1; text-align: center;">
-        <label style="color: #134e4a; font-size: 1rem;">Ingreso Disponible (Yd)</label>
-        <div id="res_Yd" class="res-val" style="font-size: 2.2rem; color: #0f766e;">-</div>
-        </div>
-        <div style="background: #fefce8; padding: 25px; border-radius: 8px; border: 1px solid #fef9c3; text-align: center;">
-        <label style="color: #854d0e; font-size: 1rem;">Brecha (Sp - I)</label>
-        <div id="res_SpI" class="res-val" style="font-size: 2.2rem; color: #a16207;">-</div>
-        </div>
-       <div style="background: #fff1f2; padding: 25px; border-radius: 8px; border: 1px solid #ffe4e6; text-align: center;">
-       <label style="color: #9f1239; font-size: 1rem;">Ahorro Externo (-NX)</label>
-       <div id="res_SX" class="res-val" style="font-size: 2.2rem; color: #be123c;">-</div>
-       </div>
     </div>
 </div>
-
         <div class="academic-credits">
             <div class="credit-logo">
                 <img src="uac-logo-2020-sm.png" alt="UAC" style="width: 80px;">
@@ -409,22 +395,25 @@
 
 <script>
     let charts = {};
-    let baseScenario = null;
+let baseScenario = null;
 
-    const chartTitles = {
-        DA: 'I. Equilibrio demanda agregada (45°)',
-        T: 'II. Presupuesto público (T - G)',
-        NX: 'III. Sector externo (X - IM)',
-        Theory: 'IV. Identidad ahorro-inversión (S - I = NX)'
-    };
+const chartTitles = {
+    DA: 'I. Equilibrio demanda agregada (45°)',
+    T: 'II. Presupuesto público (T - G)',
+    NX: 'III. Sector externo (X - IM)',
+    Theory: 'IV. Identidad ahorro-inversión (S - I = NX)'
+};
 
-    function setBase() {
+// Ejecutar update al cargar la página
+window.onload = function() {
+    update();
+};
+
+function setBase() {
     const p = getParams();
     const res = calculate(p);
-    // Guardamos tanto los parámetros como los resultados calculados
     baseScenario = { ...p, ...res }; 
     
-    // Feedback visual para el usuario
     const btn = document.querySelector('.btn-action[onclick="setBase()"]');
     const originalText = btn.innerText;
     btn.innerText = "✅ Escenario base guardado";
@@ -435,295 +424,282 @@
         btn.style.background = "var(--slate)";
     }, 2000);
 
-    update(); // Refrescamos para que aparezcan las comparativas si ya existen
+    update();
 }
 
-    function getParams() {
-        return {
-            C0: parseFloat(document.getElementById('iC0').value),
-            c: parseFloat(document.getElementById('ic').value),
-            I0: parseFloat(document.getElementById('iI0').value),
-            b: parseFloat(document.getElementById('ib').value),
-            i: parseFloat(document.getElementById('ii').value),
-            g: parseFloat(document.getElementById('ig').value),
-            G: parseFloat(document.getElementById('iG').value),
-            T0: parseFloat(document.getElementById('iT0').value),
-            t: parseFloat(document.getElementById('it').value),
-            X0: parseFloat(document.getElementById('iX0').value),
-            x_ext: parseFloat(document.getElementById('ix_ext').value),
-            Ystar: parseFloat(document.getElementById('iYstar').value),
-            IM0: parseFloat(document.getElementById('iIM0').value),
-            m: parseFloat(document.getElementById('im').value),
-            e: parseFloat(document.getElementById('ie').value),
-            n: parseFloat(document.getElementById('in').value)
-        };
-    }
+function getParams() {
+    return {
+        C0: parseFloat(document.getElementById('iC0').value),
+        c: parseFloat(document.getElementById('ic').value),
+        I0: parseFloat(document.getElementById('iI0').value),
+        b: parseFloat(document.getElementById('ib').value),
+        i: parseFloat(document.getElementById('ii').value),
+        g: parseFloat(document.getElementById('ig').value),
+        G: parseFloat(document.getElementById('iG').value),
+        T0: parseFloat(document.getElementById('iT0').value),
+        t: parseFloat(document.getElementById('it').value),
+        X0: parseFloat(document.getElementById('iX0').value),
+        x_ext: parseFloat(document.getElementById('ix_ext').value),
+        Ystar: parseFloat(document.getElementById('iYstar').value),
+        IM0: parseFloat(document.getElementById('iIM0').value),
+        m: parseFloat(document.getElementById('im').value),
+        e: parseFloat(document.getElementById('ie').value),
+        n: parseFloat(document.getElementById('in').value)
+    };
+}
 
-    function calculate(p) {
-        // Gasto autónomo consolidado (A)
-        // Se asume n_im = n/2 y n_ex = n/2 según la lógica de tus gráficos anteriores
-        const A = p.C0 - p.c * p.T0 + p.I0 - p.g * p.i + p.G + p.X0 + (p.x_ext * p.Ystar) - p.IM0 - (p.n * p.e);
-        
-        const den = 1 - p.c * (1 - p.t) - p.b + p.m;
-        const alpha = 1 / den;
-        const Y_eq = A * alpha;
-        
-        const T = p.T0 + p.t * Y_eq;
-        const C = p.C0 + p.c * (Y_eq - T);
-        const I = p.I0 + p.b * Y_eq - p.g * p.i;
-        const BS = T - p.G;
-        const Sp = Y_eq - T - C;
-        
-        // NX = (X0 + x_ext*Y* - (n/2)*e) - (IM0 + m*Y + (n/2)*e)
-        const X = p.X0 + p.x_ext * p.Ystar - (p.n / 2) * p.e;
-        const IM = p.IM0 + p.m * Y_eq + (p.n / 2) * p.e;
-        const NX = X - IM;
-
-        return { alpha, Y_eq, T, C, I, NX, BS, Sp, den, A };
-    }
+function calculate(p) {
+    const A = p.C0 - p.c * p.T0 + p.I0 - p.g * p.i + p.G + p.X0 + (p.x_ext * p.Ystar) - p.IM0 - (p.n * p.e);
+    const den = 1 - p.c * (1 - p.t) - p.b + p.m;
+    const alpha = 1 / den;
+    const Y_eq = A * alpha;
+    const T = p.T0 + p.t * Y_eq;
+    const C = p.C0 + p.c * (Y_eq - T);
+    const I = p.I0 + p.b * Y_eq - p.g * p.i;
+    const BS = T - p.G;
+    const Sp = Y_eq - T - C;
+    const X = p.X0 + p.x_ext * p.Ystar - (p.n / 2) * p.e;
+    const IM = p.IM0 + p.m * Y_eq + (p.n / 2) * p.e;
+    const NX = X - IM;
+    return { alpha, Y_eq, T, C, I, NX, BS, Sp, den, A };
+}
 
 function update() {
     const p = getParams();
     const res = calculate(p);
 
-    // 1. Actualización de etiquetas de los Sliders
+    // 1. Actualizar etiquetas flotantes de los Sliders (Incluye Ystar como PIB Mundial)
     const ids = ['C0', 'c', 'I0', 'b', 'i', 'g', 'G', 'T0', 't', 'X0', 'x_ext', 'Ystar', 'IM0', 'm', 'e', 'n'];
-    ids.forEach(id => {
-        const el = document.getElementById('v' + id);
-        if(el) {
-            el.innerText = (['c', 'b', 't', 'm', 'x_ext', 'i'].includes(id)) 
-                ? p[id].toFixed(2) 
-                : Math.round(p[id]).toLocaleString();
-        }
+   // Actualizar etiquetas flotantes de los Sliders
+   ids.forEach(id => {
+    const el = document.getElementById('v' + id);
+    if(el) {
+        el.innerText = (['c', 'b', 't', 'm', 'x_ext', 'i'].includes(id)) 
+            ? p[id].toFixed(2) 
+            : Math.round(p[id]).toLocaleString('en-US'); // Agregado 'en-US'
+    }
     });
-
     const isStable = res.den > 0;
     document.getElementById('stability-alert').style.display = isStable ? 'none' : 'block';
 
-    // Lista extendida de IDs para resultados
-    const resultsIds = [
-        'res_alpha', 'res_Y', 'res_BS', 'res_NX', 
-        'res_C', 'res_I', 'res_Sp', 'res_SI',
-        'res_S', 'res_Yd', 'res_SpI', 'res_SX'
-    ];
-
     if (isStable && res.Y_eq > 0) {
-        // 2. Cálculos de las nuevas identidades
-        const Yd = res.Y_eq - res.T;             // Ingreso Disponible
-        const S_nacional = res.Sp + res.BS;      // Ahorro Nacional (Total)
-        const SpI = res.Sp - res.I;              // Brecha de ahorro del sector privado
-        const SI_total = S_nacional - res.I;     // Identidad Fundamental (S - I)
-        const SX = -res.NX;                      // Ahorro Externo (Entrada de capitales)
-
-        // 3. Renderizado de valores en el panel
-        document.getElementById('res_alpha').innerText = res.alpha.toFixed(2);
-        document.getElementById('res_Y').innerText     = Math.round(res.Y_eq).toLocaleString();
-        document.getElementById('res_BS').innerText    = Math.round(res.BS).toLocaleString();
-        document.getElementById('res_NX').innerText    = Math.round(res.NX).toLocaleString();
-        document.getElementById('res_C').innerText     = Math.round(res.C).toLocaleString();
-        document.getElementById('res_I').innerText     = Math.round(res.I).toLocaleString();
-        document.getElementById('res_Sp').innerText    = Math.round(res.Sp).toLocaleString();
+        // Lógica de crisis
+        const isCrisis = baseScenario && res.Y_eq < baseScenario.Y_eq;
+        const yCard = document.getElementById('res_Y').parentElement;
         
-        // Valores de la nueva fila de identidades
-        document.getElementById('res_SI').innerText    = Math.round(SI_total).toLocaleString();
-        document.getElementById('res_S').innerText     = Math.round(S_nacional).toLocaleString();
-        document.getElementById('res_Yd').innerText    = Math.round(Yd).toLocaleString();
-        document.getElementById('res_SpI').innerText   = Math.round(SpI).toLocaleString();
-        document.getElementById('res_SX').innerText    = Math.round(SX).toLocaleString();
+        if (isCrisis) {
+            yCard.classList.add('bg-crisis');
+            document.getElementById('res_Y').style.color = 'white';
+        } else {
+            yCard.classList.remove('bg-crisis');
+            document.getElementById('res_Y').style.color = '#15803d'; // Color original
+        }
+        // 2. Cálculos de Identidades Macroeconómicas (Las tres brechas)
+        const Yd = res.Y_eq - res.T;              // Ingreso Disponible
+        const S_nacional = res.Sp + res.BS;       // Ahorro Nacional (Privado + Público)
+        const SpI = res.Sp - res.I;               // Brecha del Sector Privado
+        const SX = -res.NX;                       // Ahorro Externo (Déficit en Cuenta Corriente)
+        const SI_total = SpI + res.BS;            // Verificación: (Sp - I) + (T - G) = NX
 
-        renderCharts(p, res);
-    } else {
-        // En caso de error o inestabilidad, resetear todos los campos
-        resultsIds.forEach(id => {
+        // 3. Función de formateo con badges de comparación
+        const formatRes = (id, val, baseVal) => {
             const el = document.getElementById(id);
-            if(el) el.innerText = "---";
-        });
+            if (!el) return;
+            let html = Math.round(val).toLocaleString('en-US');
+            if (baseScenario) {
+                const diff = val - baseVal;
+                if (Math.abs(diff) > 0.1) {
+                    const badgeClass = diff > 0 ? 'delta-pos' : 'delta-neg';
+                    const sign = diff > 0 ? '+' : '';
+                    html += ` <span class="delta-badge ${badgeClass}">${sign}${Math.round(diff).toLocaleString()}</span>`;
+                }
+            }
+            el.innerHTML = html;
+        };
+
+        // 4. Renderizado de tarjetas
+        
+        // Multiplicador (2 decimales)
+        const alphaEl = document.getElementById('res_alpha');
+        if(alphaEl) {
+            alphaEl.innerHTML = res.alpha.toFixed(2) + (baseScenario ? 
+                ` <span class="delta-badge ${res.alpha - baseScenario.alpha > 0 ? 'delta-pos' : 'delta-neg'}">${(res.alpha - baseScenario.alpha).toFixed(2)}</span>` : '');
+        }
+
+        // Fila Principal
+        formatRes('res_Y', res.Y_eq, baseScenario?.Y_eq);
+        formatRes('res_BS', res.BS, baseScenario?.BS);
+        formatRes('res_NX', res.NX, baseScenario?.NX);
+
+        // Fila Componentes
+        formatRes('res_C', res.C, baseScenario?.C);
+        formatRes('res_I', res.I, baseScenario?.I);
+        formatRes('res_Sp', res.Sp, baseScenario?.Sp);
+
+        // Fila Identidades (Aquí activamos los valores faltantes)
+        formatRes('res_S', S_nacional, (baseScenario ? (baseScenario.Sp + baseScenario.BS) : 0));
+        formatRes('res_Yd', Yd, (baseScenario ? (baseScenario.Y_eq - baseScenario.T) : 0));
+        formatRes('res_SpI', SpI, (baseScenario ? (baseScenario.Sp - baseScenario.I) : 0));
+        formatRes('res_SX', SX, baseScenario ? -baseScenario.NX : 0);
+        
+        // La tarjeta res_SI muestra la suma de las brechas internas
+        formatRes('res_SI', SI_total, (baseScenario ? (baseScenario.Sp - baseScenario.I + baseScenario.BS) : 0));
+
+        // 5. Actualizar los gráficos
+        renderCharts(p, res);
     }
 }
-    function renderCharts(p, res) {
-        const max_X = Math.max(15000, res.Y_eq * 1.5);
-        const labels = Array.from({ length: 21 }, (_, i) => (max_X / 20) * i);
+function renderCharts(p, res) {
+    const max_X = Math.max(12000, res.Y_eq * 1.4);
+    const labels = Array.from({ length: 41 }, (_, i) => (max_X / 40) * i);
 
-        const datasets = {
-            DA: [
-                { label: 'DA = A + [1-(1/α)]Y', data: labels.map(y => res.A + (1 - 1 / res.alpha) * y), borderColor: '#1e40af', borderWidth: 3 },
-                { label: 'Línea 45°', data: labels, borderColor: '#94a3b8', borderDash: [5, 5] }
-            ],
-            T: [
-                { label: 'Recaudación (T)', data: labels.map(y => p.T0 + p.t * y), borderColor: '#065f46' },
-                { label: 'Gasto (G)', data: labels.map(() => p.G), borderColor: '#b91c1c', borderDash: [2, 2] }
-            ],
-            NX: [
-                { label: 'Export. Netas (NX)', data: labels.map(y => (p.X0 + p.x_ext * p.Ystar - (p.n / 2) * p.e) - (p.IM0 + p.m * y + (p.n / 2) * p.e)), borderColor: '#c2410c' },
-                { label: 'Equilibrio NX=0', data: labels.map(() => 0), borderColor: '#94a3b8', borderDash: [2, 2] }
-            ],
-            Theory: [
-                { label: 'S Nacional - I', data: labels.map(y => {
-                    const Ti = p.T0 + p.t * y;
-                    const Ci = p.C0 + p.c * (y - Ti);
-                    const Ii = p.I0 + p.b * y - p.g * p.i;
-                    const BSi = Ti - p.G;
-                    const Spi = y - Ti - Ci;
-                    return (Spi + BSi) - Ii;
-                }), borderColor: '#475569' },
-                { label: 'NX', data: labels.map(y => (p.X0 + p.x_ext * p.Ystar - (p.n / 2) * p.e) - (p.IM0 + p.m * y + (p.n / 2) * p.e)), borderColor: '#c2410c', borderDash: [4, 4] }
+    const configs = {
+        DA: {
+            datasets: [
+                { label: 'DA Actual', data: labels.map(y => res.A + (1 - 1/res.alpha)*y), borderColor: '#1e40af', borderWidth: 3, pointRadius: 0 },
+                { label: '45°', data: labels, borderColor: '#94a3b8', borderDash: [5,5], borderWidth: 1, pointRadius: 0 }
             ]
-        };
+        },
+        T: {
+            datasets: [
+                { label: 'Recaudación (T)', data: labels.map(y => p.T0 + p.t*y), borderColor: '#065f46', borderWidth: 2.5, pointRadius: 0 },
+                { label: 'Gasto (G)', data: labels.map(() => p.G), borderColor: '#b91c1c', borderDash: [4,4], borderWidth: 2, pointRadius: 0 }
+            ]
+        },
+        NX: {
+            datasets: [
+                { label: 'NX', data: labels.map(y => (p.X0 + p.x_ext * p.Ystar - (p.n/2)*p.e) - (p.IM0 + p.m*y + (p.n/2)*p.e)), borderColor: '#c2410c', borderWidth: 2.5, pointRadius: 0 },
+                { label: 'Equilibrio (0)', data: labels.map(() => 0), borderColor: '#94a3b8', borderWidth: 1, pointRadius: 0 }
+            ]
+        },
+        Theory: {
+            datasets: [
+                { label: 'S Nacional - I', data: labels.map(y => {
+                    let Ti = p.T0 + p.t*y;
+                    let Spi = y - Ti - (p.C0 + p.c*(y-Ti));
+                    let Ii = p.I0 + p.b*y - p.g*p.i;
+                    return (Spi + (Ti - p.G)) - Ii;
+                }), borderColor: '#475569', borderWidth: 3, pointRadius: 0 },
+                { label: 'NX (Sector Externo)', data: labels.map(y => (p.X0 + p.x_ext * p.Ystar - (p.n/2)*p.e) - (p.IM0 + p.m*y + (p.n/2)*p.e)), borderColor: '#c2410c', borderDash: [3,3], borderWidth: 2, pointRadius: 0 }
+            ]
+        }
+    };
 
-        const equilibriumAnnotation = {
+    // Lógica de color para la alerta visual de caída
+    const isCrisis = baseScenario && res.Y_eq < baseScenario.Y_eq;
+    const alertColor = isCrisis ? 'rgba(185, 28, 28, 1)' : '#1e40af';
+    const alertLine = isCrisis ? 'rgba(185, 28, 28, 0.5)' : 'rgba(30, 64, 175, 0.3)';
+
+    Object.keys(configs).forEach(id => {
+        const canvas = document.getElementById('chart' + id);
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if(charts[id]) charts[id].destroy();
+        
+        charts[id] = new Chart(ctx, {
             type: 'line',
-            xMin: res.Y_eq,
-            xMax: res.Y_eq,
-            borderColor: '#1e40af',
-            borderWidth: 2,
-            borderDash: [6, 6],
-            label: {
-                display: true,
-                content: 'Y* = ' + Math.round(res.Y_eq).toLocaleString(),
-                position: 'end',
-                backgroundColor: '#1e40af',
-                color: 'white',
-                font: { size: 11, weight: 'bold' }
-            }
-        };
-
-        Object.keys(datasets).forEach(id => {
-            const ctx = document.getElementById('chart' + id).getContext('2d');
-            const currentAnnotations = { eq: equilibriumAnnotation };
-
-            if (charts[id]) {
-                charts[id].data.labels = labels;
-                charts[id].data.datasets = datasets[id];
-                charts[id].options.scales.x.max = max_X;
-                charts[id].options.plugins.annotation.annotations = currentAnnotations;
-                charts[id].update('none');
-            } else {
-                charts[id] = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels, datasets: datasets[id] },
-                    options: { 
-                        responsive: true, maintainAspectRatio: false, animation: false,
-                        elements: { point: { radius: 0 } },
-                        scales: { 
-                            y: { 
-                                beginAtZero: false,
-                                ticks: { callback: v => v.toLocaleString() }
-                            },
-                            x: { 
-                                type: 'linear',
-                                min: 0,
-                                max: max_X,
-                                ticks: { callback: v => v.toLocaleString() }
+            data: { labels, datasets: configs[id].datasets },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                animation: { duration: 400 },
+                scales: {
+                    x: { type: 'linear', min: 0, max: max_X, title: { display: true, text: 'Ingreso (Y)' } },
+                    y: { beginAtZero: id !== 'NX' && id !== 'Theory' }
+                },
+                plugins: {
+                    title: { display: true, text: chartTitles[id] },
+                    annotation: {
+                        annotations: {
+                            lineEq: {
+                                type: 'line',
+                                xMin: res.Y_eq,
+                                xMax: res.Y_eq,
+                                borderColor: alertLine,
+                                borderDash: [6,6],
+                                borderWidth: 2,
+                                label: {
+                                    display: true,
+                                    content: (isCrisis ? '⚠️ ' : '') + 'Y* = ' + Math.round(res.Y_eq).toLocaleString('en-US'),
+                                    position: 'top',
+                                    backgroundColor: alertColor,
+                                    color: '#fff',
+                                    font: { size: 12, weight: 'bold' },
+                                    padding: 6,
+                                    borderRadius: 4
+                                }
                             }
-                        },
-                        plugins: {
-                            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
-                            title: { display: true, text: chartTitles[id], color: '#1e293b', font: { size: 14, weight: 'bold' } },
-                            annotation: { annotations: currentAnnotations }
                         }
                     }
-                });
+                }
             }
         });
-    }
-
-    window.onload = () => { update(); };
+    });
+}
+function clearBase() {
+    baseScenario = null;
+    update();
+}
 function exportToCSV() {
     const p = getParams();
     const res = calculate(p);
     
-    // Preparar los datos (Etiqueta, Valor)
-    const data = [
-        ["REPORTE DE ESCENARIO - MACROECONOMIA II"],
-        ["Fecha", new Date().toLocaleString()],
-        [""],
-        ["PARAMETROS DE ENTRADA"],
-        ["Consumo autonomo (C0)", p.C0],
-        ["Propension marginal (c)", p.c],
-        ["Inversion autonoma (I0)", p.I0],
-        ["Sensibilidad inversion (b)", p.b],
-        ["Tasa de interes (i)", p.i],
-        ["Gasto publico (G)", p.G],
-        ["Tasa impositiva (t)", p.t],
-        ["Exportaciones (X0)", p.X0],
-        ["PIB Mundial (Y*)", p.Ystar],
-        ["Tipo de cambio (e)", p.e],
-        [""],
-        ["RESULTADOS CALCULADOS"],
-        ["Multiplicador (alpha)", res.alpha.toFixed(4)],
-        ["PIB Equilibrio (Y*)", Math.round(res.Y_eq)],
-        ["Consumo (C)", Math.round(res.C)],
-        ["Inversion (I)", Math.round(res.I)],
-        ["Saldo Fiscal (BS)", Math.round(res.BS)],
-        ["Exportaciones Netas (NX)", Math.round(res.NX)],
-        ["Ahorro Privado (Sp)", Math.round(res.Sp)],
-        ["Ahorro Nacional (S)", Math.round(res.Sp + res.BS)],
-        ["Ingreso Disponible (Yd)", Math.round(res.Y_eq - res.T)]
-    ];
+    // Identidades actuales
+    const Yd = res.Y_eq - res.T;
+    const SpI = res.Sp - res.I;
+    const SX = -res.NX;
 
-    // Convertir array a formato CSV
-    let csvContent = "data:text/csv;charset=utf-8," 
-        + data.map(e => e.join(",")).join("\n");
+    // Identidades escenario base (si existe)
+    const bYd = baseScenario ? (baseScenario.Y_eq - baseScenario.T) : 0;
+    const bSpI = baseScenario ? (baseScenario.Sp - baseScenario.I) : 0;
+    const bSX = baseScenario ? -baseScenario.NX : 0;
 
-    // Crear link de descarga
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Variable,Escenario Base,Escenario Actual,Variacion,Descripcion\n";
+    
+    const addRow = (label, baseVal, currVal, desc) => {
+        const diff = currVal - baseVal;
+        csvContent += `${label},${baseVal.toFixed(2)},${currVal.toFixed(2)},${diff.toFixed(2)},${desc}\n`;
+    };
+
+    // 1. Variables de Control
+    csvContent += "--- VARIABLES DE CONTROL (INPUTS) ---\n";
+    addRow("G", baseScenario?.G || p.G, p.G, "Gasto Publico");
+    addRow("t", baseScenario?.t || p.t, p.t, "Tasa Impositiva");
+    addRow("e", baseScenario?.e || p.e, p.e, "Tipo de Cambio");
+    addRow("c", baseScenario?.c || p.c, p.c, "Propension al Consumo");
+
+    // 2. Resultados de Equilibrio
+    csvContent += "\n--- RESULTADOS DE EQUILIBRIO ---\n";
+    addRow("Y_eq", baseScenario?.Y_eq || res.Y_eq, res.Y_eq, "PIB de Equilibrio");
+    addRow("Alpha", baseScenario?.alpha || res.alpha, res.alpha, "Multiplicador");
+    addRow("NX", baseScenario?.NX || res.NX, res.NX, "Exportaciones Netas");
+    addRow("BS", baseScenario?.BS || res.BS, res.BS, "Saldo Fiscal");
+
+    // 3. Identidades Sectoriales (Las Tres Brechas)
+    csvContent += "\n--- IDENTIDADES Y BRECHAS (S - I = NX) ---\n";
+    addRow("Sp-I", bSpI, SpI, "Brecha Sector Privado");
+    addRow("T-G", baseScenario?.BS || res.BS, res.BS, "Brecha Sector Publico");
+    addRow("Ahorro Ext (-NX)", bSX, SX, "Ahorro Externo");
+    addRow("Yd", bYd, Yd, "Ingreso Disponible");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Escenario_Y_${Math.round(res.Y_eq)}.csv`);
+    link.setAttribute("download", `Comparativa_UAC_Macro_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
-
     link.click();
     document.body.removeChild(link);
 }
-function exportToCSV() {
-    const p = getParams();
-    const res = calculate(p);
-    const Yd = res.Y_eq - res.T;
-    const S_nacional = res.Sp + res.BS;
+function clearBase() {
+    baseScenario = null;
+    update(); // Refresca los resultados para quitar los badges
     
-    // Encabezados del CSV
-    let csvContent = "Variable,Escenario Actual";
+    const btn = document.querySelector('.btn-action[onclick="setBase()"]');
+    btn.style.background = "var(--slate)";
+    btn.innerText = "Fijar escenario base";
     
-    // Si existe un escenario base, añadimos la columna y la diferencia
-    if (baseScenario) {
-        csvContent += ",Escenario Base,Diferencia (Actual - Base)";
-    }
-    csvContent += "\n";
-
-    // Definición de las filas a exportar
-    const rows = [
-        ["Multiplicador (alpha)", res.alpha.toFixed(2), baseScenario ? baseScenario.alpha.toFixed(2) : null],
-        ["PIB de Equilibrio (Y*)", res.Y_eq.toFixed(2), baseScenario ? baseScenario.Y_eq.toFixed(2) : null],
-        ["Consumo (C)", res.C.toFixed(2), baseScenario ? baseScenario.C.toFixed(2) : null],
-        ["Inversion (I)", res.I.toFixed(2), baseScenario ? baseScenario.I.toFixed(2) : null],
-        ["Saldo Fiscal (BS)", res.BS.toFixed(2), baseScenario ? baseScenario.BS.toFixed(2) : null],
-        ["Exportaciones Netas (NX)", res.NX.toFixed(2), baseScenario ? baseScenario.NX.toFixed(2) : null],
-        ["Ahorro Privado (Sp)", res.Sp.toFixed(2), baseScenario ? baseScenario.Sp.toFixed(2) : null],
-        ["Ahorro Nacional (S)", S_nacional.toFixed(2), baseScenario ? (baseScenario.Sp + baseScenario.BS).toFixed(2) : null]
-    ];
-
-    // Procesar cada fila
-    rows.forEach(row => {
-        let line = `${row[0]},${row[1]}`;
-        if (baseScenario) {
-            const baseVal = parseFloat(row[2]);
-            const actualVal = parseFloat(row[1]);
-            const diff = actualVal - baseVal;
-            line += `,${baseVal},${diff.toFixed(2)}`;
-        }
-        csvContent += line + "\n";
-    });
-
-    // Crear y descargar el archivo
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Simulacion_Macro_UAC_${new Date().getTime()}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    alert("Escenario base eliminado. Los resultados ya no mostrarán comparativas.");
 }
 </script>
 </body>
