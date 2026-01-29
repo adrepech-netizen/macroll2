@@ -136,6 +136,47 @@
         .credit-logo { text-align: center; border-right: 1px solid #e2e8f0; padding-right: 20px; }
         
         .exercise-item { margin-bottom: 15px; padding: 10px; border-left: 4px solid var(--uac-gold); background: #f8fafc; border-radius: 0 8px 8px 0; }
+.bg-crisis { background-color: #b91c1c !important; color: white !important; }
+        .text-crisis { color: #b91c1c !important; }
+        
+        /* --- ADAPTACIÓN PARA MÓVILES Y TABLETAS --- */
+        @media (max-width: 1024px) {
+            .wrapper {
+                grid-template-columns: 1fr; /* Una sola columna principal */
+                height: auto;
+                overflow-y: visible;
+            }
+            .sidebar {
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            .main-content {
+                overflow-y: visible;
+                padding-right: 0;
+            }
+            /* Gráficos: de 2 columnas a 1 sola */
+            div[style*="grid-template-columns: repeat(2, 1fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+            /* Tarjetas de resultados: de 4 columnas a 2 */
+            .logic-panel div[style*="grid-template-columns: repeat(4, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            .welcome-card { padding: 20px; }
+            .header-inst h1 { font-size: 1.2rem; }
+            .res-val { font-size: 1.6rem !important; } /* Ajuste de números grandes */
+            
+            /* Sliders más grandes para facilitar el toque con el dedo */
+            input[type="range"] {
+                height: 20px;
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
