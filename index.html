@@ -326,7 +326,7 @@
         </div>
         <div class="control-group">
             <label>Impuestos autónomos (T₀): <span id="vT0" class="val-display">0</span></label>
-            <input type="range" id="iT0" min="0" max="1000" step="50" value="0" oninput="update()">
+            <input type="range" id="iT0" min="0" max="1000" step="50" value="100" oninput="update()">
         </div>
         <div class="control-group">
             <label>Tasa impositiva (t): <span id="vt" class="val-display">0.20</span></label>
@@ -757,19 +757,19 @@ function exportPDF() {
     const p = getParams();
     const res = calculate(p);
     
-    // Encabezado con estética de examen
+    // Encabezado
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.setTextColor(30, 64, 175); 
-    doc.text("Hoja de trabajo: determinación del equilibrio", 20, 20);
+    doc.text("Hoja de trabajo: equilibrio macroeconómico", 20, 20);
     
     doc.setFontSize(10);
     doc.setTextColor(80);
-    doc.text("Universidad Autónoma de Campeche | Licenciatura en Economía", 20, 26);
-    doc.text(`Estudiante: __________________________________  Matrícula: _________`, 20, 34);
+    doc.text("Universidad Autónoma de Campeche | Dr. Adrián Pech Quijano", 20, 26);
+    doc.text(`Estudiante: __________________________________  Fecha: ${new Date().toLocaleDateString()}`, 20, 34);
     doc.line(20, 38, 190, 38);
 
-// SECCIÓN 1: EL MODELO (ECUACIONES Y DESCRIPCIÓN DE PARÁMETROS)
+    // SECCIÓN 1: EL MODELO
     doc.setFontSize(12);
     doc.setTextColor(0);
     doc.setFont("helvetica", "bold");
@@ -792,26 +792,22 @@ function exportPDF() {
     modelo.forEach(item => {
         doc.setFont("helvetica", "bold");
         doc.text(item.eq, 25, yPos);
-        
         doc.setFont("helvetica", "italic");
         doc.setTextColor(100);
         doc.text("   --> " + item.desc, 90, yPos);
-        
         doc.setTextColor(0);
         yPos += 7;
     });
 
-    // NOTA DIDÁCTICA REESTRUCTURADA
+    // NOTA DIDÁCTICA
     yPos += 2;
     doc.setDrawColor(230);
     doc.line(25, yPos, 185, yPos); 
     yPos += 5;
-
     doc.setFontSize(8);
     doc.setFont("helvetica", "bolditalic");
     doc.setTextColor(100);
     doc.text("NOTA SOBRE EL SECTOR EXTERNO:", 25, yPos);
-    
     doc.setFont("helvetica", "italic");
     doc.text("El término (n/2)e representa el impacto del Tipo de Cambio Real.", 25, yPos + 4);
     doc.text("En IM, el signo (+) indica que una depreciación (e sube) encarece la factura de importación,", 25, yPos + 8);
@@ -819,23 +815,20 @@ function exportPDF() {
     
     yPos += 20; 
 
-    // SECCIÓN 2: DATOS CONFIGURADOS
+    // SECCIÓN 2: DATOS
     doc.setFontSize(12);
     doc.setTextColor(0);
     doc.setFont("helvetica", "bold");
     doc.text("II. Parámetros y variables exógenas:", 20, yPos);
-    
     doc.setFontSize(9);
     yPos += 7;
-    
     const datosValores = [
         { label: "Sector Consumo:", val: `C0 = ${p.C0} | c = ${p.c} | T0 = ${p.T0} | t = ${p.t}` },
         { label: "Sector Inversión:", val: `I0 = ${p.I0} | b = ${p.b} | i = ${p.i} | g = ${p.g}` },
         { label: "Gasto Público:", val: `G = ${p.G} (Política Fiscal)` },
-        { label: "Sector Externo (X):", val: `X0 = ${p.X0} | Y* = ${p.Ystar} | x_ext = ${p.x_ext} | e = ${p.e}` },
+        { label: "Sector Externo (X):", val: `X0 = ${p.X0} | Y*ext = ${p.Ystar} | x_ext = ${p.x_ext} | e = ${p.e}` },
         { label: "Sector Externo (IM):", val: `IM0 = ${p.IM0} | m = ${p.m} | n = ${p.n}` }
     ];
-
     datosValores.forEach(item => {
         doc.setFont("helvetica", "bold");
         doc.text(item.label, 25, yPos);
@@ -846,37 +839,88 @@ function exportPDF() {
         yPos += 7;
     });
 
-    // SECCIÓN 3: ÁREA DE DESARROLLO
+    // SECCIÓN 3: DESARROLLO
     yPos += 5;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("III. Desarrollo matemático:", 20, yPos);
-    
+    doc.text("III. Desarrollo Matemático (Guía de Procedimiento):", 20, yPos);
     yPos += 5;
     doc.setDrawColor(200);
-    doc.rect(20, yPos, 170, 35); 
-    
+    doc.rect(20, yPos, 170, 32); 
     doc.setFontSize(8.5);
     doc.setFont("helvetica", "italic");
     doc.setTextColor(100);
-    
     const guias = [
         "1. Obtenga Gasto Autónomo (A).   --> Agrupar todos los componentes que no dependen de Y.",
         "2. Calcule Multiplicador (alpha). --> Considerar c, t, b y m en la fórmula de economía abierta.",
         "3. Halle Y*, Yd, BS y NX.         --> Realizar sustituciones y verificar la identidad de las brechas."
     ];
-
     let guiaPos = yPos + 8;
     guias.forEach(guia => {
         doc.text(guia, 25, guiaPos);
         guiaPos += 9; 
     });
-  
-    // Pie de página con autoría
-    doc.setFontSize(8);
-    doc.setTextColor(100);
-    doc.text(`Material generado por el Simulador del Dr. Adrián Eduardo Pech Quijano - Escenario: ${Math.round(res.Y_eq)}`, 105, 285, { align: "center" });
 
+// SECCIÓN 4: TABLA DE COMPROBACIÓN
+    yPos += 38; 
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(0);
+    doc.text("IV. Tabla de comprobación de resultados:", 20, yPos);
+    
+    doc.setFont("courier", "normal");
+    doc.setFontSize(9);
+    
+    // 1. Preparamos los datos del simulador (deben coincidir con el orden de las filas)
+    const datosSim = [
+        Math.round(res.Y_eq).toLocaleString('en-US'),
+        res.alpha.toFixed(2),
+        Math.round(res.BS).toLocaleString('en-US'),
+        Math.round(res.NX).toLocaleString('en-US'),
+        Math.round(res.Y_eq - res.T).toLocaleString('en-US')
+    ];
+
+    const filasBase = [
+        "Variable                     | Resultado manual (Alumno) | Resultado Simulador",
+        "-----------------------------|---------------------------|--------------------",
+        "Ingreso de equilibrio (Y*)   | _________________________ |",
+        "Multiplicador (alpha)        | _________________________ |",
+        "Saldo fiscal (BS)            | _________________________ |",
+        "Exportaciones netas (NX)     | _________________________ |",
+        "Ingreso disponible (Yd)      | _________________________ |"
+    ];
+
+    let tablePos = yPos + 10;
+    filasBase.forEach((fila, index) => {
+        // Dibujamos el texto base en negro
+        doc.setTextColor(0);
+        doc.setFont("courier", "normal");
+        doc.text(fila, 25, tablePos);
+        
+        // Si no es el encabezado ni la línea divisoria, insertamos el resultado en azul
+        if (index > 1) {
+            doc.setTextColor(30, 64, 175); // Color azul (mismo del encabezado)
+            doc.setFont("courier", "bold");
+            // El valor 158 es la coordenada X aproximada para la tercera columna
+            doc.text(datosSim[index - 2], 185, tablePos, { align: "right" });
+        }
+        tablePos += 7.5;
+    });
+
+ 
+    // Pie de página final (Ajustado para evitar desborde de margen)
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5); // Reducido ligeramente para asegurar espacio
+    doc.setTextColor(100);
+    
+    const footerLine1 = "Material generado por el Simulador del Dr. Adrián Eduardo Pech Quijano";
+    const footerLine2 = `Escenario de simulación: Y* ≈ ${Math.round(res.Y_eq)} | ID de Sesión: ${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+    // Posicionamiento centrado (105 es la mitad de una hoja A4)
+    doc.text(footerLine1, 105, 285, { align: "center" });
+    doc.text(footerLine2, 105, 289, { align: "center" });
+
+    // Guardar archivo
     doc.save(`Practica_Macro_UAC.pdf`);
 }
 </script>
