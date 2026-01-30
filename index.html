@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Macroeconomía - Dr. Adrián Eduardo Pech Quijano</title>
@@ -374,7 +375,12 @@
                     📥 Exportar escenario (CSV)
                     </button>
         <button class="btn-action" style="background: #475569; margin-top: 8px;" onclick="clearBase()">🗑️ Limpiar escenario base</button>
-    </div>
+        <button class="btn-action" 
+        style="background: #ffffff; color: var(--blue); border: 2px solid var(--blue); margin-top: 15px;" 
+        onclick="exportPDF()">
+    ✍️ Generar Hoja de Práctica (PDF)
+</button>
+</div>
 
     <div class="main-content">
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
@@ -743,6 +749,135 @@ function clearBase() {
     btn.innerText = "Fijar escenario base";
     
     alert("Escenario base eliminado. Los resultados ya no mostrarán comparativas.");
+}
+
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const p = getParams();
+    const res = calculate(p);
+    
+    // Encabezado con estética de examen
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(30, 64, 175); 
+    doc.text("Hoja de trabajo: determinación del equilibrio", 20, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(80);
+    doc.text("Universidad Autónoma de Campeche | Licenciatura en Economía", 20, 26);
+    doc.text(`Estudiante: __________________________________  Matrícula: _________`, 20, 34);
+    doc.line(20, 38, 190, 38);
+
+// SECCIÓN 1: EL MODELO (ECUACIONES Y DESCRIPCIÓN DE PARÁMETROS)
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.setFont("helvetica", "bold");
+    doc.text("I. Estructura del modelo de economía abierta:", 20, 48);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9); 
+    
+    const modelo = [
+        { eq: "C = C0 + c(Y - T)", desc: "C0: Consumo autónomo | c: Propensión marginal a consumir" },
+        { eq: "I = I0 + bY - gi", desc: "I0: Inv. autónoma | b: Eficacia marginal inv. | g: Sensibilidad a tasa (i)" },
+        { eq: "G = G", desc: "G: Gasto Público (Variable exógena de política fiscal)" },
+        { eq: "T = T0 + tY", desc: "T0: Impuestos fijos | t: Tasa impositiva proporcional" },
+        { eq: "X = X0 + x_ext(Y*) - (n/2)e", desc: "X0: Exp. autónomas | n/2: Sensibilidad al tipo de cambio real (e)" },
+        { eq: "IM = IM0 + mY + (n/2)e", desc: "IM0: Imp. autónomas | m: Propensión marginal a importar" },
+        { eq: "Y = C + I + G + X - IM", desc: "Condición de equilibrio en el mercado de bienes" }
+    ];
+
+    let yPos = 55;
+    modelo.forEach(item => {
+        doc.setFont("helvetica", "bold");
+        doc.text(item.eq, 25, yPos);
+        
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(100);
+        doc.text("   --> " + item.desc, 90, yPos);
+        
+        doc.setTextColor(0);
+        yPos += 7;
+    });
+
+    // NOTA DIDÁCTICA REESTRUCTURADA
+    yPos += 2;
+    doc.setDrawColor(230);
+    doc.line(25, yPos, 185, yPos); 
+    yPos += 5;
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bolditalic");
+    doc.setTextColor(100);
+    doc.text("NOTA SOBRE EL SECTOR EXTERNO:", 25, yPos);
+    
+    doc.setFont("helvetica", "italic");
+    doc.text("El término (n/2)e representa el impacto del Tipo de Cambio Real.", 25, yPos + 4);
+    doc.text("En IM, el signo (+) indica que una depreciación (e sube) encarece la factura de importación,", 25, yPos + 8);
+    doc.text("aumentando el valor monetario de las compras al exterior.", 25, yPos + 12);
+    
+    yPos += 20; 
+
+    // SECCIÓN 2: DATOS CONFIGURADOS
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.setFont("helvetica", "bold");
+    doc.text("II. Parámetros y variables exógenas:", 20, yPos);
+    
+    doc.setFontSize(9);
+    yPos += 7;
+    
+    const datosValores = [
+        { label: "Sector Consumo:", val: `C0 = ${p.C0} | c = ${p.c} | T0 = ${p.T0} | t = ${p.t}` },
+        { label: "Sector Inversión:", val: `I0 = ${p.I0} | b = ${p.b} | i = ${p.i} | g = ${p.g}` },
+        { label: "Gasto Público:", val: `G = ${p.G} (Política Fiscal)` },
+        { label: "Sector Externo (X):", val: `X0 = ${p.X0} | Y* = ${p.Ystar} | x_ext = ${p.x_ext} | e = ${p.e}` },
+        { label: "Sector Externo (IM):", val: `IM0 = ${p.IM0} | m = ${p.m} | n = ${p.n}` }
+    ];
+
+    datosValores.forEach(item => {
+        doc.setFont("helvetica", "bold");
+        doc.text(item.label, 25, yPos);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(100);
+        doc.text("   --> " + item.val, 90, yPos);
+        doc.setTextColor(0);
+        yPos += 7;
+    });
+
+    // SECCIÓN 3: ÁREA DE DESARROLLO
+    yPos += 5;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("III. Desarrollo Matemático (Guía de Procedimiento):", 20, yPos);
+    
+    yPos += 5;
+    doc.setDrawColor(200);
+    doc.rect(20, yPos, 170, 35); 
+    
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(100);
+    
+    const guias = [
+        "1. Obtenga Gasto Autónomo (A).   --> Agrupar todos los componentes que no dependen de Y.",
+        "2. Calcule Multiplicador (alpha). --> Considerar c, t, b y m en la fórmula de economía abierta.",
+        "3. Halle Y*, Yd, BS y NX.         --> Realizar sustituciones y verificar la identidad de las brechas."
+    ];
+
+    let guiaPos = yPos + 8;
+    guias.forEach(guia => {
+        doc.text(guia, 25, guiaPos);
+        guiaPos += 9; 
+    });
+  
+    // Pie de página con autoría
+    doc.setFontSize(8);
+    doc.setTextColor(100);
+    doc.text(`Material generado por el Simulador del Dr. Adrián Eduardo Pech Quijano - Escenario: ${Math.round(res.Y_eq)}`, 105, 285, { align: "center" });
+
+    doc.save(`Practica_Macro_UAC.pdf`);
 }
 </script>
 </body>
