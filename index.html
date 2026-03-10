@@ -693,49 +693,77 @@ function exportToCSV() {
     const p = getParams();
     const res = calculate(p);
     
-    // Identidades actuales
+    // Identidades y cálculos adicionales para el reporte actual
     const Yd = res.Y_eq - res.T;
     const SpI = res.Sp - res.I;
     const SX = -res.NX;
+    const S_nacional = res.Sp + res.BS;
 
-    // Identidades escenario base (si existe)
-    const bYd = baseScenario ? (baseScenario.Y_eq - baseScenario.T) : 0;
-    const bSpI = baseScenario ? (baseScenario.Sp - baseScenario.I) : 0;
-    const bSX = baseScenario ? -baseScenario.NX : 0;
+    // Cálculos para el escenario base (si existe)
+    const bRes = baseScenario ? calculate(baseScenario) : null;
+    const bYd = bRes ? (bRes.Y_eq - bRes.T) : null;
+    const bSpI = bRes ? (bRes.Sp - bRes.I) : null;
+    const bS_nacional = bRes ? (bRes.Sp + bRes.BS) : null;
 
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Variable,Escenario Base,Escenario Actual,Variacion,Descripcion\n";
     
-    const addRow = (label, baseVal, currVal, desc) => {
-        const diff = currVal - baseVal;
-        csvContent += `${label},${baseVal.toFixed(2)},${currVal.toFixed(2)},${diff.toFixed(2)},${desc}\n`;
+    // Encabezado con metadatos
+    csvContent += "SIMULADOR MACROECONOMICO - Dr. Adrian Eduardo Pech Quijano\n";
+    csvContent += `Fecha de exportacion,${new Date().toLocaleString()}\n\n`;
+
+    // Helper para filas con comparación
+    const addRow = (label, simbolo, actual, base, desc) => {
+        const baseVal = base !== null ? base : actual;
+        const diff = actual - baseVal;
+        return `${label},${simbolo},${actual.toFixed(2)},${baseVal.toFixed(2)},${diff.toFixed(2)},${desc}\n`;
     };
 
-    // 1. Variables de Control
-    csvContent += "--- VARIABLES DE CONTROL (INPUTS) ---\n";
-    addRow("G", baseScenario?.G || p.G, p.G, "Gasto Publico");
-    addRow("t", baseScenario?.t || p.t, p.t, "Tasa Impositiva");
-    addRow("e", baseScenario?.e || p.e, p.e, "Tipo de Cambio");
-    addRow("c", baseScenario?.c || p.c, p.c, "Propension al Consumo");
+    // 1. PARAMETROS COMPLETOS
+    csvContent += "--- PARAMETROS PARA ECUACIONES (INPUTS) ---\n";
+    csvContent += "Variable,Simbolo,Valor Actual,Escenario Base,Variacion,Descripcion\n";
+    csvContent += addRow("Consumo autonomo", "C0", p.C0, baseScenario?.C0 ?? null, "Gasto base de las familias");
+    csvContent += addRow("Propension marginal a consumir", "c", p.c, baseScenario?.c ?? null, "Pendiente de la funcion de consumo");
+    csvContent += addRow("Inversion autonoma", "I0", p.I0, baseScenario?.I0 ?? null, "Inversion fija");
+    csvContent += addRow("Sensibilidad inversion al ingreso", "b", p.b, baseScenario?.b ?? null, "Coeficiente de inversion inducida");
+    csvContent += addRow("Tasa de interes", "i", p.i, baseScenario?.i ?? null, "Costo del capital (exogena)");
+    csvContent += addRow("Sensibilidad inversion al interes", "g", p.g, baseScenario?.g ?? null, "Respuesta de I ante cambios en i");
+    csvContent += addRow("Gasto publico", "G", p.G, baseScenario?.G ?? null, "Gasto del gobierno (Politica Fiscal)");
+    csvContent += addRow("Impuestos autonomos", "T0", p.T0, baseScenario?.T0 ?? null, "Recaudacion fija");
+    csvContent += addRow("Tasa impositiva", "t", p.t, baseScenario?.t ?? null, "Impuesto proporcional al ingreso");
+    csvContent += addRow("Exportaciones autonomas", "X0", p.X0, baseScenario?.X0 ?? null, "Ventas al exterior base");
+    csvContent += addRow("Sensibilidad ingreso externo", "x_ext", p.x_ext, baseScenario?.x_ext ?? null, "Impacto del PIB mundial en exportaciones");
+    csvContent += addRow("PIB Mundial (Y*)", "Ystar", p.Ystar, baseScenario?.Ystar ?? null, "Ingreso del resto del mundo");
+    csvContent += addRow("Importaciones autonomas", "IM0", p.IM0, baseScenario?.IM0 ?? null, "Compras al exterior base");
+    csvContent += addRow("Propension marginal a importar", "m", p.m, baseScenario?.m ?? null, "Fraccion del ingreso gastada en importaciones");
+    csvContent += addRow("Tipo de cambio", "e", p.e, baseScenario?.e ?? null, "Precio de la divisa extranjera");
+    csvContent += addRow("Sensibilidad NX al TC", "n", p.n, baseScenario?.n ?? null, "Impacto de depreciacion/apreciacion en balanza comercial");
+    csvContent += "\n";
 
-    // 2. Resultados de Equilibrio
-    csvContent += "\n--- RESULTADOS DE EQUILIBRIO ---\n";
-    addRow("Y_eq", baseScenario?.Y_eq || res.Y_eq, res.Y_eq, "PIB de Equilibrio");
-    addRow("Alpha", baseScenario?.alpha || res.alpha, res.alpha, "Multiplicador");
-    addRow("NX", baseScenario?.NX || res.NX, res.NX, "Exportaciones Netas");
-    addRow("BS", baseScenario?.BS || res.BS, res.BS, "Saldo Fiscal");
+    // 2. RESULTADOS DE EQUILIBRIO
+    csvContent += "--- RESULTADOS DE EQUILIBRIO ---\n";
+    csvContent += "Indicador,Simbolo,Valor Actual,Escenario Base,Variacion,Formula/Referencia\n";
+    csvContent += addRow("Gasto Autonomo Total", "A", res.A, bRes?.A ?? null, "Componentes constantes");
+    csvContent += addRow("Multiplicador", "alpha", res.alpha, bRes?.alpha ?? null, "1 / [1-c(1-t)-b+m]");
+    csvContent += addRow("PIB de Equilibrio", "Y*", res.Y_eq, bRes?.Y_eq ?? null, "A * alpha");
+    csvContent += addRow("Ingreso Disponible", "Yd", Yd, bYd ?? null, "Y - T");
+    csvContent += addRow("Consumo Agregado", "C", res.C, bRes?.C ?? null, "C0 + c(Yd)");
+    csvContent += addRow("Inversion Agregada", "I", res.I, bRes?.I ?? null, "I0 + bY - gi");
+    csvContent += addRow("Recaudacion Total", "T", res.T, bRes?.T ?? null, "T0 + tY");
+    csvContent += "\n";
 
-    // 3. Identidades Sectoriales (Las Tres Brechas)
-    csvContent += "\n--- IDENTIDADES Y BRECHAS (S - I = NX) ---\n";
-    addRow("Sp-I", bSpI, SpI, "Brecha Sector Privado");
-    addRow("T-G", baseScenario?.BS || res.BS, res.BS, "Brecha Sector Publico");
-    addRow("Ahorro Ext (-NX)", bSX, SX, "Ahorro Externo");
-    addRow("Yd", bYd, Yd, "Ingreso Disponible");
+    // 3. IDENTIDADES SECTORIALES
+    csvContent += "--- IDENTIDADES SECTORIALES (COMPROBACION) ---\n";
+    csvContent += "Sector,Simbolo,Valor Actual,Escenario Base,Variacion,Interpretacion\n";
+    csvContent += addRow("Privado (S - I)", "Sp - I", SpI, bSpI ?? null, "Excedente/Deficit privado");
+    csvContent += addRow("Publico (Presupuesto)", "BS", res.BS, bRes?.BS ?? null, "Superavit o Deficit Fiscal");
+    csvContent += addRow("Externo (Export. Netas)", "NX", res.NX, bRes?.NX ?? null, "Balanza Comercial");
+    csvContent += addRow("Ahorro Nacional", "S", S_nacional, bS_nacional ?? null, "S_privado + S_publico");
+    csvContent += addRow("Comprobacion", "S-I = NX", (S_nacional - res.I), (bS_nacional ? bS_nacional - bRes.I : null), "Debe ser igual a NX");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Comparativa_UAC_Macro_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `Comparativa_Ecuaciones_UAC_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
