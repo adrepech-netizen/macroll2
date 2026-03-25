@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macroeconomía II - Facultad de Ciencias Sociales - UAC</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #27ae60;
+            --bg: #f8f9fa;
+            --border: #dee2e6;
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; color: #333; background: var(--bg); padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        
+        .header-inst { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 20px; }
+        .header-inst h3 { margin: 5px 0; color: var(--secondary); font-weight: 400; }
+        .header-inst h4 { margin: 5px 0; color: var(--accent); }
+
+        h1 { text-align: center; color: var(--primary); font-weight: 400; margin-top: 20px; text-transform: lowercase; }
+        h1::first-letter { text-transform: uppercase; }
+        h2 { color: var(--secondary); margin-top: 35px; font-weight: 500; border-left: 4px solid var(--accent); padding-left: 15px; }
+        
+        .theory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
+        @media (max-width: 768px) { .theory-grid { grid-template-columns: 1fr; } }
+
+        .card { border: 1px solid var(--border); padding: 20px; border-radius: 8px; background: #fff; margin-bottom: 15px; }
+        
+        /* Gráficos Derivación OA */
+        .derivation-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; margin: 20px 0; align-items: start; }
+        .quadrant { border: 1px solid #eee; padding: 15px; border-radius: 8px; transition: all 0.3s ease; background: #fff; }
+        .quadrant:hover { border-color: var(--accent); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .quad-label { font-size: 0.9em; font-weight: 600; color: var(--primary); margin-bottom: 10px; display: block; border-bottom: 1px solid #f4f4f4; }
+
+        /* Cuadro de Lógica de Transmisión */
+        .logic-flow { display: flex; align-items: center; justify-content: center; background: #f1f8f4; padding: 15px; border-radius: 6px; border: 1px solid #d4efdf; margin: 15px 0; gap: 10px; font-weight: 500; color: #1b5e20; }
+        .logic-step-box { background: white; padding: 5px 10px; border-radius: 4px; border: 1px solid #a9dfbf; box-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95em; }
+        th { background: var(--primary); color: white; padding: 12px; font-weight: 500; }
+        td { border: 1px solid var(--border); padding: 10px; }
+        tr:nth-child(even) { background: #fdfdfd; }
+
+        .exercise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+        .quiz-item { background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; border-top: 3px solid #ddd; }
+        
+        details { margin-top: auto; padding-top: 10px; }
+        summary { cursor: pointer; color: var(--accent); font-weight: 600; outline: none; user-select: none; }
+        .ans { margin-top: 8px; padding: 10px; background: #eef9f1; border-radius: 4px; font-size: 0.9em; border-left: 3px solid var(--accent); }
+
+        .formula { font-family: monospace; background: #f4f4f4; padding: 2px 5px; border-radius: 3px; color: #c0392b; font-weight: bold; }
+        svg { background: white; border: 1px solid #eee; border-radius: 5px; width: 100%; max-width: 400px; display: block; margin: 10px auto; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header-inst">
+        <h3>Universidad Autónoma de Campeche</h3>
+        <h4>Facultad de Ciencias Sociales</h4>
+        <p>Licenciatura en Economía | Unidad de Aprendizaje: Macroeconomía II</p>
+        <p><strong>Elaborado por: Dr. Adrián Eduardo Pech Quijano</strong></p>
+    </header>
+
+    <h1>Modelo de Oferta y Demanda Agregada: Guía Maestra</h1>
+
+    <section>
+        <h2>1. Oferta Agregada (OACP y OALP)</h2>
+        <div class="theory-grid">
+            <div class="card">
+                <p>La <strong>Oferta Agregada (OA)</strong> muestra la cantidad de producción que las empresas están dispuestas a ofrecer a cada nivel de precios.</p>
+                <ul>
+                    <li><strong>Corto Plazo (OACP):</strong> Tiene pendiente positiva debido a que los salarios nominales son rígidos. Un aumento en los precios reduce el salario real, incentivando la producción.</li>
+                    <li><strong>Largo Plazo (OALP):</strong> Es una línea vertical en el nivel de <strong>PIB Potencial</strong>. A largo plazo, los precios y salarios se ajustan totalmente.</li>
+                    <li><strong>Desplazamientos:</strong> Cambios en tecnología, stock de capital o precios de insumos mueven estas curvas.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <svg viewBox="-15 -15 280 230">
+                    <line x1="30" y1="170" x2="230" y2="170" stroke="#333" stroke-width="2"/>
+                    <line x1="30" y1="170" x2="30" y2="20" stroke="#333" stroke-width="2"/>
+                    
+                    <path d="M 50 150 Q 130 130 210 40" fill="none" stroke="#e67e22" stroke-width="3"/>
+                    <line x1="130" y1="170" x2="130" y2="20" stroke="#8e44ad" stroke-width="2" stroke-dasharray="5"/>
+                    
+                    <text x="235" y="175" font-size="12" font-weight="bold">Y</text>
+                    <text x="25" y="10" font-size="12" font-weight="bold">P</text>
+                    <text x="170" y="195" font-size="10" fill="#333">PIB Real (Y)</text>
+                    <text x="180" y="70" font-size="9" fill="#e67e22" font-weight="bold">OACP</text>
+                    <text x="135" y="30" font-size="9" fill="#8e44ad" font-weight="bold">OALP</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. Perspectivas de la OA: Clásica vs Keynesiana</h2>
+        <div class="theory-grid">
+            <div class="card" style="border-top: 3px solid #e74c3c;">
+                <h3>Enfoque Clásico</h3>
+                <p>Basado en la flexibilidad total de precios y salarios.</p>
+                <ul>
+                    <li><strong>OA Vertical:</strong> La economía siempre tiende al pleno empleo (Y*).</li>
+                    <li><strong>Ajuste:</strong> Cualquier cambio en la demanda solo afecta al nivel de precios, no a la producción.</li>
+                    <li><strong>Ley de Say:</strong> "La oferta crea su propia demanda".</li>
+                </ul>
+            </div>
+            <div class="card" style="border-top: 3px solid #3498db;">
+                <h3>Enfoque Keynesiano</h3>
+                <p>Basado en la rigidez o "viscosidad" de los salarios nominales.</p>
+                <ul>
+                    <li><strong>OA con Pendiente:</strong> En el corto plazo, los aumentos en la demanda sí elevan el PIB.</li>
+                    <li><strong>Desempleo:</strong> Es posible un equilibrio persistente con desempleo si la demanda es insuficiente.</li>
+                    <li><strong>Rol del Estado:</strong> Se justifica la intervención fiscal para estimular la producción.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>3. Derivación de la OA desde el Mercado de Trabajo</h2>
+        <div class="card">
+            <p>La curva de Oferta Agregada se deriva analizando cómo las variaciones en el nivel de precios afectan el mercado laboral y, por ende, la producción total a través de la función de producción.</p>
+            
+            <div class="derivation-grid">
+                <div class="quadrant">
+                    <span class="quad-label">I. Equilibrio en Mercado de Trabajo</span>
+                    <svg viewBox="-5 -5 130 110">
+                        <line x1="20" y1="85" x2="115" y2="85" stroke="#333" stroke-width="1"/>
+                        <line x1="20" y1="85" x2="20" y2="10" stroke="#333" stroke-width="1"/>
+                        <line x1="30" y1="20" x2="105" y2="80" stroke="#c0392b" stroke-width="1.5"/>
+                        <text x="100" y="75" font-size="7" fill="#c0392b">Ld</text>
+                        <line x1="30" y1="80" x2="105" y2="20" stroke="#2980b9" stroke-width="1.5"/>
+                        <text x="100" y="25" font-size="7" fill="#2980b9">Lo</text>
+                        <text x="118" y="90" font-size="8" font-weight="bold">L</text>
+                        <text x="0" y="8" font-size="8" font-weight="bold">W/P</text>
+                    </svg>
+                </div>
+
+                <div class="quadrant">
+                    <span class="quad-label">II. Función de Producción Y = F(L, K)</span>
+                    <svg viewBox="-5 -5 130 110">
+                        <line x1="20" y1="85" x2="115" y2="85" stroke="#333" stroke-width="1"/>
+                        <line x1="20" y1="85" x2="20" y2="10" stroke="#333" stroke-width="1"/>
+                        <path d="M 20 85 C 45 40, 85 25, 115 20" fill="none" stroke="#27ae60" stroke-width="2"/>
+                        <line x1="65" y1="85" x2="65" y2="40" stroke="#ccc" stroke-dasharray="2"/>
+                        <line x1="20" y1="40" x2="65" y2="40" stroke="#ccc" stroke-dasharray="2"/>
+                        <text x="90" y="95" font-size="7" font-weight="bold">Trabajo (L)</text>
+                        <text x="0" y="8" font-size="8" font-weight="bold">PIB (Y)</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="logic-flow">
+                <div class="logic-step-box">Precios <b>P &uarr;</b></div>
+                <span>&rarr;</span>
+                <div class="logic-step-box">Salario Real <b>W/P &darr;</b></div>
+                <span>&rarr;</span>
+                <div class="logic-step-box">Empleo <b>L &uarr;</b></div>
+                <span>&rarr;</span>
+                <div class="logic-step-box">Producción <b>Y &uarr;</b></div>
+            </div>
+            
+            <p style="font-size: 0.9em; background: #fdfefe; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
+                <strong>Análisis:</strong> Dada la rigidez del salario nominal (<b>W</b>), un incremento en <b>P</b> abarata el costo relativo del factor trabajo. Las empresas, buscando maximizar beneficios, aumentan la contratación hasta que la productividad marginal iguala al nuevo salario real, lo que eleva el nivel de producto final.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Demanda Agregada (DA)</h2>
+        <div class="card">
+            <p>La <strong>Demanda Agregada (DA)</strong> representa el gasto total de los hogares, empresas, gobierno y el sector externo.</p>
+            <p><strong>Fórmula:</strong> <span class="formula">DA = C + I + G + (X - M)</span></p>
+            <ul>
+                <li><strong>Efecto Tasa de Interés:</strong> Un menor nivel de precios reduce la demanda de dinero, baja la tasa de interés y estimula la Inversión (I).</li>
+                <li><strong>Política Fiscal:</strong> Cambios en el Gasto Público (G) o Impuestos (T) desplazan la DA.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>5. Casos Especiales: Trampa de Liquidez e IS-LM</h2>
+        <div class="card">
+            <p>Basado en el modelo <strong>IS-LM</strong>, la <strong>Trampa de Liquidez</strong> ocurre cuando la tasa de interés nominal llega a su límite inferior (cerca de cero). En este punto, la curva LM se vuelve horizontal.</p>
+            <p><strong>Impacto:</strong> La Política Monetaria se vuelve inútil para estimular la DA. Aquí, la Política Fiscal es la herramienta más potente para reactivar la economía.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>6. Tabla Comparativa de Políticas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Política</th>
+                    <th>Herramienta Principal</th>
+                    <th>Impacto en DA / OA</th>
+                    <th>Resultado en PIB y Precios</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fiscal Expansiva</td>
+                    <td>Aumento de G o baja de T</td>
+                    <td>DA hacia la derecha</td>
+                    <td>Sube PIB, suben Precios</td>
+                </tr>
+                <tr>
+                    <td>Monetaria Expansiva</td>
+                    <td>Baja de Tasa de Interés</td>
+                    <td>DA hacia la derecha</td>
+                    <td>Sube PIB, suben Precios</td>
+                </tr>
+                <tr>
+                    <td>Choque de Oferta Negativo</td>
+                    <td>Aumento costo de insumos</td>
+                    <td>OACP hacia la izquierda</td>
+                    <td>Baja PIB, suben Precios (Estanflación)</td>
+                </tr>
+                <tr>
+                    <td>Mejora Tecnológica</td>
+                    <td>Innovación productiva</td>
+                    <td>OACP y OALP derecha</td>
+                    <td>Sube PIB, bajan Precios</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>7. Batería de Ejercicios</h2>
+        <div class="exercise-grid">
+            
+            <div class="quiz-item">
+                <p><strong>P1. Cálculo de DA:</strong> Si Consumo=2000, Inversión=500, Gasto=600 y Exportaciones Netas=-100. ¿Cuál es el valor de la DA?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        DA = 2000 + 500 + 600 + (-100) = <strong>3000</strong>.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P2. El Multiplicador:</strong> Con una PMC de 0.8, ¿cuánto aumenta el PIB si el gobierno gasta $200 millones?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        k = 1 / (1 - 0.8) = 5. Aumento total = 5 * 200 = <strong>$1,000 millones</strong>.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P3. Impuestos:</strong> Si la PMC es 0.75 y se reducen los impuestos en $100. ¿Cuál es el efecto final?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        k de impuestos = -0.75 / (1 - 0.75) = -3. Como es reducción (-100), el efecto es -3 * (-100) = <strong>+$300</strong>.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P4. Curva de Phillips:</strong> Si el desempleo actual está por debajo de la tasa natural, ¿qué se espera de la inflación?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        Se espera que la <strong>inflación aumente</strong> debido a la presión al alza sobre los salarios nominales.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P5. Escenario de Estanflación:</strong> ¿Qué movimiento de curvas describe un escenario donde el desempleo sube y los precios también?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        Un desplazamiento de la <strong>OACP hacia la izquierda</strong> (choque de oferta negativo).
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P6. Trampa de Liquidez:</strong> En este estado, ¿qué sucede si el Banco Central aumenta la oferta monetaria?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        El impacto en la DA es <strong>nulo o mínimo</strong>, ya que las tasas de interés no pueden bajar más para incentivar la Inversión.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P7. Largo Plazo:</strong> Si la DA aumenta persistentemente en el OALP, ¿cuál es el resultado final?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        Un aumento únicamente en el <strong>Nivel de Precios (inflación)</strong>, sin cambios permanentes en el PIB Real.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P8. Expectativas:</strong> Si los trabajadores esperan una inflación del 10% el próximo año, ¿qué sucede con la OACP hoy?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        Se desplaza hacia la <strong>izquierda</strong>, ya que los costos salariales aumentan preventivamente.
+                    </div>
+                </details>
+            </div>
+
+            <div class="quiz-item">
+                <p><strong>P9. Escuelas de Pensamiento:</strong> ¿Cuál es la diferencia principal entre el enfoque Clásico y el Keynesiano respecto a la curva de OA?</p>
+                <details>
+                    <summary>Ver solución</summary>
+                    <div class="ans">
+                        A) Los clásicos asumen salarios rígidos; los keynesianos flexibilidad.<br>
+                        B) <strong>Los clásicos asumen flexibilidad total (OA vertical); los keynesianos asumen rigidez nominal (OA con pendiente).</strong><br>
+                        C) Ambos coinciden en que la OA siempre es horizontal.
+                    </div>
+                </details>
+            </div>
+
+        </div>
+    </section>
+
+    <footer style="margin-top: 50px; text-align: center; font-size: 0.85em; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 20px;">
+        © 2026 - Universidad Autónoma de Campeche | Dr. Adrián Eduardo Pech Quijano
+    </footer>
+</div>
+
+</body>
+</html>
