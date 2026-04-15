@@ -3,46 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regla del 70 - Macroeconomía II</title>
+    <title>Regla del 70 - Macroeconomía II (UAC)</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 10px; margin: 0; }
-        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 550px; }
         
-        .uac-header { text-align: center; border-bottom: 3px solid #8e1c3a; margin-bottom: 15px; padding-bottom: 10px; }
-        .uac-header h2 { color: #8e1c3a; margin: 0; font-size: 1.2em; text-transform: uppercase; }
-        .uac-header p { margin: 5px 0; color: #2c3e50; font-weight: bold; font-size: 0.9em; }
+        .uac-header { text-align: center; border-bottom: 3px solid #8e1c3a; margin-bottom: 15px; }
+        .uac-header h2 { color: #8e1c3a; margin: 0; font-size: 1.1em; text-transform: uppercase; }
+        .uac-header p { margin: 5px 0; color: #333; font-weight: bold; font-size: 0.9em; }
         
-        .author { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 20px; }
+        .author { text-align: center; font-size: 0.8em; color: #777; margin-bottom: 20px; }
         
-        .calc-box { background: #fdfdfd; border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; }
-        label { font-weight: bold; font-size: 1em; display: block; margin-bottom: 10px; }
+        .calc-box { background: #f8f9fa; border: 1px solid #e1e4e8; padding: 20px; border-radius: 12px; text-align: center; }
+        label { font-weight: bold; font-size: 0.95em; color: #2c3e50; }
         
-        /* Input optimizado para móvil */
         input { 
-            width: 100%; 
-            max-width: 150px; 
-            padding: 12px; 
-            font-size: 1.2em; 
-            border: 2px solid #3498db; 
-            border-radius: 8px; 
-            text-align: center; 
-            -webkit-appearance: none; 
+            width: 100%; max-width: 140px; padding: 12px; font-size: 1.3em; 
+            border: 2px solid #3498db; border-radius: 8px; text-align: center; 
+            margin: 10px 0; inputmode: decimal;
         }
 
-        .quick-btns { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
+        .quick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .btn { 
-            background: #f0f0f0; 
-            border: 1px solid #ccc; 
-            padding: 8px 12px; 
-            border-radius: 5px; 
-            font-size: 0.85em; 
-            cursor: pointer; 
+            background: #fff; border: 1px solid #3498db; color: #3498db;
+            padding: 8px; border-radius: 6px; font-size: 0.75em; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center;
         }
+        .btn:active { background: #3498db; color: white; }
+        .btn-campeche { border-color: #8e1c3a; color: #8e1c3a; grid-column: span 2; font-weight: bold; }
 
-        .result { font-size: 1.3em; color: #27ae60; font-weight: bold; margin-top: 20px; min-height: 1.5em; }
+        .result { font-size: 1.3em; font-weight: bold; margin-top: 15px; min-height: 1.4em; }
         
-        .notes { font-size: 0.9em; line-height: 1.5; color: #444; margin-top: 20px; text-align: justify; }
-        .math { font-size: 0.85em; background: #eee; padding: 10px; border-radius: 5px; margin-top: 15px; }
+        .challenge-box {
+            background: #fff8e1; border: 1px solid #ffe082; padding: 15px; 
+            border-radius: 10px; margin-top: 20px;
+        }
+        .challenge-title { color: #f57c00; font-weight: bold; display: block; margin-bottom: 5px; }
+        .challenge-text { font-size: 0.9em; color: #5d4037; font-style: italic; line-height: 1.5; }
+
+        .campeche-detail {
+            background: #fdf2f2; border-left: 4px solid #8e1c3a; color: #444;
+            padding: 12px; font-size: 0.85em; margin-top: 15px; text-align: justify; display: none;
+        }
+        .math { font-size: 0.75em; color: #999; margin-top: 15px; text-align: center; }
     </style>
 </head>
 <body>
@@ -50,47 +53,77 @@
 <div class="container">
     <div class="uac-header">
         <h2>Universidad Autónoma de Campeche</h2>
-        <p>Facultad de Ciencias Sociales</p> 
-        <p>Unidad de aprendizaje: Macroeconomía II</p>
+        <p>Facultad de Ciencias Sociales</p>
+        <p>Macroeconomía II</p>
     </div>
 
-    <div class="author-centered">
-        Elaborado por: Dr. Adrián Eduardo Pech Quijano
+    <div class="author">
+        Elaborado por: <strong>Dr. Adrián Eduardo Pech Quijano</strong>
     </div>
-
-    <h3 style="text-align: center;">Simulador: La Regla del 70</h3>
 
     <div class="calc-box">
-        <label>Tasa de crecimiento anual (%):</label><br><br>
-        <input type="number" id="rate" value="1.6" step="0.1" oninput="update()">
+        <label>Tasa de crecimiento anual (%)</label>
+        <input type="number" id="rate" value="1.64" step="0.01" oninput="update()">
+        
+        <div class="quick-btns">
+            <div class="btn" onclick="setRate(1.64)">Nacional Histórico (1.64%)</div>
+            <div class="btn" onclick="setRate(2.5)">Potencial Estimado (2.5%)</div>
+            <div class="btn btn-campeche" onclick="setRate(-3.5)">Caso Campeche (Decrecimiento)</div>
+        </div>
+
         <div class="result" id="output"></div>
     </div>
 
-    <div class="notes">
-        <p><strong>Observaciones:</strong></p>
-        <ul>
-            <li><strong>Distorsión política:</strong> El crecimiento del <strong>7%</strong> mencionado en el año 2000 fue una cifra retórica. De haberse cumplido, el PIB se duplicaría cada 10 años.</li>
-            <li><strong>Realidad económica:</strong> Históricamente, el crecimiento se ha situado cerca del <strong>1.64%</strong>. Con esta tasa, la economía requiere <strong>42 años y 8 meses</strong> para duplicarse.</li>
-            <li><strong>Ajuste de precisión:</strong> Para tasas superiores al 5%, se recomienda utilizar la <strong>Regla del 72</strong> para mayor exactitud.</li>
-        </ul>
+    <div class="challenge-box">
+        <span class="challenge-title">⚠️ Reflexión:</span>
+        <p class="challenge-text">
+            "Si la nación crece al 1.64% y nosotros decrecemos al 3.5%, ¿cuánto tiempo tardará la brecha de desigualdad entre Campeche y el resto de México en volverse insostenible?"
+        </p>
+    </div>
 
-        <div class="math">
-            <strong>Fundamento:</strong> El tiempo <em>t*</em> necesario para duplicar <em>Yo</em> se obtiene de <em>2Yo = Yo e<sup>rt</sup></em>. Al simplificar: <em>t = ln(2)/r</em>, lo que se aproxima pragmáticamente a <strong>70/x</strong>.
-        </div>
+    <div id="campeche-explanation" class="campeche-detail">
+        <strong>Divergencia:</strong><br>
+        La brecha de desigualdad crece a una tasa neta del <strong>5.14%</strong> (suma de las velocidades opuestas). A este ritmo, la distancia económica entre el estado y la federación se duplica cada <strong>13 años y medio</strong>.
+    </div>
+
+    <div class="math">
+        Derivación: 2Y₀ = Y₀e<sup>rt</sup>  => t ≈ 70 / x
     </div>
 </div>
 
 <script>
+    function setRate(val) {
+        document.getElementById('rate').value = val;
+        update();
+    }
+
     function update() {
         const x = parseFloat(document.getElementById('rate').value);
         const out = document.getElementById('output');
-        if (x > 0) {
-            const t = 70 / x;
+        const campNote = document.getElementById('campeche-explanation');
+        
+        campNote.style.display = (x < 0) ? "block" : "none";
+
+        if (x !== 0 && !isNaN(x)) {
+            const absX = Math.abs(x);
+            const t = 70 / absX;
             const y = Math.floor(t);
             const m = Math.round((t - y) * 12);
-            out.innerText = `Duplicación en: ${y} años ${m > 0 ? 'y ' + m + ' meses' : ''}`;
+            
+            let timeStr = `${y} años`;
+            if (m > 0 && m < 12) timeStr += ` y ${m} meses`;
+            if (m === 12) timeStr = `${y + 1} años`;
+
+            if (x > 0) {
+                out.style.color = x >= 2.5 ? "#27ae60" : "#e67e22";
+                out.innerText = `Se duplicará en: ${timeStr}`;
+            } else {
+                out.style.color = "#c0392b";
+                out.innerText = `Se reducirá a la mitad en: ${timeStr}`;
+            }
         } else {
-            out.innerText = "Ingrese una tasa válida";
+            out.innerText = "Tasa no válida";
+            out.style.color = "#777";
         }
     }
     update();
